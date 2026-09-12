@@ -1,71 +1,83 @@
+import { Container, Section } from '@/components/layout'
 import { Photo } from '@/components/Photo'
+import { Reveal } from '@/components/Reveal'
+import { SectionHeading } from '@/components/SectionHeading'
 import { useReveal } from '@/hooks/useReveal'
 import { approachPhoto } from '@/lib/images'
 
-const features = [
-  { num: '01', title: 'Speak From Day One', desc: 'Real communication is part of every lesson.' },
+const principles = [
   {
-    num: '02',
-    title: 'Learn by Doing',
-    desc: 'Games, challenges, activities and practical exercises keep students engaged.',
+    title: 'Speak from day one',
+    desc: 'Speaking isn’t saved for later. It’s part of every lesson, at every level.',
   },
   {
-    num: '03',
-    title: 'Personalized Learning',
-    desc: 'Activities and lesson difficulty are adapted to each learner.',
+    title: 'Learn by doing',
+    desc: 'Games, challenges and hands-on tasks: students match, move, solve and create.',
   },
   {
-    num: '04',
-    title: 'Confidence First',
-    desc: 'A supportive environment helps students speak without fear of mistakes.',
+    title: 'Personalised learning',
+    desc: 'The plan follows the learner, not a fixed textbook, and changes as they grow.',
+  },
+  {
+    title: 'Confidence first',
+    desc: 'Feeling safe to speak comes before perfect accuracy. The accuracy follows.',
   },
 ]
 
+/*
+ * Motion: each principle reveals as it is reached, its large number first,
+ * then the title and description. On hover the number strengthens and a
+ * short brand rule grows along the top border. No card treatment; it stays
+ * an editorial list.
+ */
 export function Approach() {
-  const ref = useReveal()
+  const photoRef = useReveal()
 
   return (
-    <section id="my-approach" className="bg-[#FAF9F6] py-20 lg:py-28 overflow-hidden">
-      <div className="max-w-7xl mx-auto px-5 sm:px-6 lg:px-10">
-        <div ref={ref} className="reveal grid lg:grid-cols-2 gap-12 lg:gap-20 items-center">
-          <div>
-            <p className="text-xs font-medium tracking-widest text-[#3F6C88] uppercase mb-4">
-              My Approach
-            </p>
-            <h2 className="text-[32px] sm:text-[38px] lg:text-[44px] leading-tight text-[#2F3A40] mb-3 text-balance">
-              More Than Just English Lessons
-            </h2>
-            <p className="text-[#68767D] text-base lg:text-lg mb-9 lg:mb-10 leading-relaxed">
-              Learning works best when students actively use the language.
-            </p>
+    <Section id="my-approach" labelledBy="approach-title">
+      <Container className="grid items-center gap-14 lg:grid-cols-[1.1fr_0.9fr] lg:gap-24">
+        <div>
+          <SectionHeading
+            id="approach-title"
+            eyebrow="My approach"
+            title="Learning should feel active"
+            intro="My classes are built around participation, not passive memorisation. English is something my students use, not simply something they study."
+          />
 
-            <ol className="space-y-7">
-              {features.map((f) => (
-                <li key={f.num} className="flex gap-5">
-                  <span className="font-serif text-[#5d8fad] text-2xl w-8 shrink-0 leading-none mt-0.5">
-                    {f.num}
+          <ol className="mt-12 grid gap-x-10 [--order-step:90ms] sm:grid-cols-2">
+            {principles.map((p, i) => (
+              <Reveal
+                as="li"
+                key={p.title}
+                className="group relative border-t border-line py-7 before:absolute before:-top-px before:left-0 before:h-px before:w-12 before:origin-left before:scale-x-0 before:bg-brand before:transition-transform before:duration-500 before:ease-soft hover:before:scale-x-100"
+              >
+                <span className="reveal block font-serif text-4xl leading-none [--distance:14px]" aria-hidden="true">
+                  <span className="text-brand-accent transition-colors duration-300 group-hover:text-brand">
+                    {String(i + 1).padStart(2, '0')}
                   </span>
-                  <div>
-                    <h3 className="text-[#2F3A40] font-semibold mb-1 text-base">{f.title}</h3>
-                    <p className="text-[#68767D] text-sm leading-relaxed">{f.desc}</p>
-                  </div>
-                </li>
-              ))}
-            </ol>
-          </div>
-
-          <div className="relative">
-            <div
-              className="pointer-events-none absolute -right-12 top-0 w-56 h-56 rounded-full bg-[#BFD7EA]/20 blur-3xl"
-              aria-hidden="true"
-            />
-            <Photo
-              photo={approachPhoto}
-              className="relative z-10 w-full aspect-4/3 rounded-[22px] shadow-xl"
-            />
-          </div>
+                </span>
+                <div className="reveal [--delay:110ms] [--distance:10px]">
+                  <h3 className="mt-4 text-xl text-ink">{p.title}</h3>
+                  <p className="mt-2 text-[15px] leading-relaxed text-muted">{p.desc}</p>
+                </div>
+              </Reveal>
+            ))}
+          </ol>
         </div>
-      </div>
-    </section>
+
+        <figure ref={photoRef} className="reveal relative mx-auto w-full max-w-md pb-10 lg:max-w-none lg:pb-0">
+          <Photo
+            photo={approachPhoto}
+            sizes="(min-width: 1024px) 440px, (min-width: 640px) 448px, 90vw"
+            className="aspect-4/5 w-full rounded-media shadow-media"
+          />
+          <figcaption className="reveal absolute right-4 bottom-0 left-4 rounded-2xl bg-brand px-6 py-5 text-white shadow-card [--delay:250ms] [--distance:12px] sm:right-auto sm:-left-6 sm:max-w-[18rem] lg:-bottom-8">
+            <span className="block font-serif text-xl leading-snug">
+              Practice builds confidence. Confidence builds communication.
+            </span>
+          </figcaption>
+        </figure>
+      </Container>
+    </Section>
   )
 }

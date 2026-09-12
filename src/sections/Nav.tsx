@@ -1,119 +1,166 @@
-import { useEffect, useState } from 'react'
-import { siteConfig } from '@/site.config'
-
-const links = [
-  { label: 'About', href: '#about' },
-  { label: 'Lessons', href: '#lessons' },
-  { label: 'My Approach', href: '#my-approach' },
-  { label: 'Experience', href: '#experience' },
-  { label: 'Gallery', href: '#gallery' },
-  { label: 'Contact', href: '#contact' },
-]
+import { useEffect, useRef, useState } from 'react'
+import { ButtonLink } from '@/components/Button'
+import { navIds, navLinks } from '@/data/navigation'
+import { useActiveSection } from '@/hooks/useActiveSection'
 
 export function Nav() {
   const [open, setOpen] = useState(false)
   const [scrolled, setScrolled] = useState(false)
+  const active = useActiveSection(navIds)
+  const toggleRef = useRef<HTMLButtonElement>(null)
+  const listRef = useRef<HTMLDivElement>(null)
+  const indicatorRef = useRef<HTMLSpanElement>(null)
 
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 24)
+    const onScroll = () => setScrolled(window.scrollY > 16)
     onScroll()
     window.addEventListener('scroll', onScroll, { passive: true })
     return () => window.removeEventListener('scroll', onScroll)
   }, [])
 
+  // One underline that slides between links as the active section changes.
+  // Measured only when the section changes or the list resizes, never per scroll frame.
+  useEffect(() => {
+    const list = listRef.current
+    const bar = indicatorRef.current
+    if (!list || !bar) return
+
+    const place = () => {
+      const link = active ? list.querySelector<HTMLElement>(`a[href="#${active}"]`) : null
+      if (!link || link.offsetWidth === 0) {
+        bar.removeAttribute('data-visible')
+        return
+      }
+      const appearing = !bar.hasAttribute('data-visible')
+      bar.style.transform = `translate(${link.offsetLeft}px, ${link.offsetTop + link.offsetHeight + 2}px) scaleX(${link.offsetWidth})`
+      if (appearing) {
+        // Appear in place, rather than sliding in from wherever it last was.
+        void bar.offsetWidth
+        bar.setAttribute('data-visible', '')
+      }
+    }
+
+    place()
+    const resize = new ResizeObserver(place)
+    resize.observe(list)
+    return () => resize.disconnect()
+  }, [active])
+
   useEffect(() => {
     if (!open) return
     const onKey = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') setOpen(false)
+      if (e.key === 'Escape') {
+        setOpen(false)
+        toggleRef.current?.focus()
+      }
+    }
+    // Close if the viewport grows into the desktop layout.
+    const desktop = window.matchMedia('(width >= 64rem)')
+    const onResize = () => {
+      if (desktop.matches) setOpen(false)
     }
     window.addEventListener('keydown', onKey)
-    return () => window.removeEventListener('keydown', onKey)
+    desktop.addEventListener('change', onResize)
+    return () => {
+      window.removeEventListener('keydown', onKey)
+      desktop.removeEventListener('change', onResize)
+    }
   }, [open])
+
+  const solid = scrolled || open
 
   return (
     <header
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-        scrolled || open ? 'bg-white/95 backdrop-blur-sm shadow-sm' : 'bg-transparent'
+      className={`fixed inset-x-0 top-0 z-50 border-b transition-[background-color,border-color,backdrop-filter] duration-500 ease-soft ${
+        solid ? 'border-line bg-canvas/90 backdrop-blur-md' : 'border-transparent bg-transparent'
       }`}
     >
-      <nav aria-label="Main" className="max-w-7xl mx-auto px-5 sm:px-6 lg:px-10 h-16 flex items-center justify-between gap-4">
-        <a
-          href="#top"
-          className="font-serif text-[16px] sm:text-[17px] text-[#2F3A40] tracking-tight whitespace-nowrap"
-        >
-          {siteConfig.brandName}
+      {/* Reading progress: a hairline driven by the page scroll itself (CSS scroll timeline, no JavaScript). */}
+      <span className="scroll-progress" aria-hidden="true" />
+
+      <nav
+        aria-label="Main"
+        className="mx-auto flex h-[4.5rem] w-full max-w-[76rem] items-center justify-between gap-6 px-5 sm:px-8 lg:px-12"
+      >
+        <a href="#top" className="font-serif text-xl tracking-tight whitespace-nowrap text-ink">
+          English <em className="text-brand">with</em> Diana
         </a>
 
-        <ul className="hidden lg:flex items-center gap-7">
-          {links.map((l) => (
-            <li key={l.href}>
-              <a
-                href={l.href}
-                className="text-sm text-[#68767D] hover:text-[#2F3A40] transition-colors duration-200"
-              >
-                {l.label}
-              </a>
-            </li>
-          ))}
-        </ul>
+        <div ref={listRef} className="relative hidden lg:block">
+          <ul className="flex items-center gap-8">
+            {navLinks.map((l) => {
+              const isActive = active === l.id
+              return (
+                <li key={l.id}>
+                  {/* Hover previews a faint underline; the active link gets the sliding indicator. */}
+                  <a
+                    href={`#${l.id}`}
+                    aria-current={isActive ? 'true' : undefined}
+                    className={`relative py-2 text-[15px] transition-colors duration-200 after:absolute after:inset-x-0 after:-bottom-0.5 after:h-px after:origin-left after:scale-x-0 after:bg-current after:opacity-30 after:transition-transform after:duration-300 after:ease-soft ${
+                      isActive ? 'text-ink' : 'text-muted hover:text-ink hover:after:scale-x-100'
+                    }`}
+                  >
+                    {l.label}
+                  </a>
+                </li>
+              )
+            })}
+          </ul>
+          <span ref={indicatorRef} className="nav-indicator text-ink" aria-hidden="true" />
+        </div>
 
-        <div className="hidden lg:flex">
-          <a
-            href="#contact"
-            className="px-5 py-2.5 rounded-full bg-[#4A7C9B] text-white text-sm font-medium hover:bg-[#3F6C88] transition-all duration-200 hover:-translate-y-0.5 shadow-sm hover:shadow-md"
-          >
+        <div className="hidden lg:block">
+          <ButtonLink href="#contact" size="sm">
             Book a Lesson
-          </a>
+          </ButtonLink>
         </div>
 
         <button
+          ref={toggleRef}
           type="button"
-          className="lg:hidden flex flex-col gap-1.5 p-2 -mr-2"
+          className="-mr-2 flex h-11 w-11 flex-col items-center justify-center gap-1.5 lg:hidden"
           onClick={() => setOpen((v) => !v)}
           aria-expanded={open}
           aria-controls="mobile-menu"
           aria-label={open ? 'Close menu' : 'Open menu'}
         >
           <span
-            className={`block w-6 h-0.5 bg-[#2F3A40] transition-all duration-200 ${open ? 'rotate-45 translate-y-2' : ''}`}
+            className={`block h-px w-6 bg-ink transition-transform duration-300 ${open ? 'translate-y-[3.5px] rotate-45' : ''}`}
           />
-          <span className={`block w-6 h-0.5 bg-[#2F3A40] transition-all duration-200 ${open ? 'opacity-0' : ''}`} />
           <span
-            className={`block w-6 h-0.5 bg-[#2F3A40] transition-all duration-200 ${open ? '-rotate-45 -translate-y-2' : ''}`}
+            className={`block h-px w-6 bg-ink transition-transform duration-300 ${open ? '-translate-y-[3.5px] -rotate-45' : ''}`}
           />
         </button>
       </nav>
 
+      {/* `inert` removes the collapsed menu from the tab order and the accessibility tree. */}
       <div
         id="mobile-menu"
-        className={`lg:hidden bg-white overflow-hidden transition-[max-height] duration-300 ${
-          open ? 'max-h-96 border-t border-[#EFF7FB]' : 'max-h-0'
+        inert={!open}
+        className={`grid transition-[grid-template-rows] duration-300 ease-out lg:hidden ${
+          open ? 'grid-rows-[1fr]' : 'grid-rows-[0fr]'
         }`}
       >
-        <ul className="px-5 sm:px-6 py-4 flex flex-col gap-4">
-          {links.map((l) => (
-            <li key={l.href}>
-              <a
-                href={l.href}
-                onClick={() => setOpen(false)}
-                tabIndex={open ? 0 : -1}
-                className="text-sm text-[#2F3A40] hover:text-[#4A7C9B] transition-colors"
-              >
-                {l.label}
-              </a>
+        <div className="overflow-hidden">
+          <ul className="mx-auto flex max-w-[76rem] flex-col px-5 pt-2 pb-6 sm:px-8">
+            {navLinks.map((l) => (
+              <li key={l.id} className="border-b border-line">
+                <a
+                  href={`#${l.id}`}
+                  onClick={() => setOpen(false)}
+                  className="flex items-center justify-between py-4 font-serif text-2xl text-ink"
+                >
+                  {l.label}
+                </a>
+              </li>
+            ))}
+            <li className="pt-6">
+              <ButtonLink href="#contact" onClick={() => setOpen(false)} className="w-full">
+                Book a Lesson
+              </ButtonLink>
             </li>
-          ))}
-          <li className="pt-2">
-            <a
-              href="#contact"
-              onClick={() => setOpen(false)}
-              tabIndex={open ? 0 : -1}
-              className="block px-5 py-2.5 rounded-full bg-[#4A7C9B] text-white text-sm font-medium w-full text-center"
-            >
-              Book a Lesson
-            </a>
-          </li>
-        </ul>
+          </ul>
+        </div>
       </div>
     </header>
   )

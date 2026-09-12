@@ -1,28 +1,32 @@
-import type { ReactNode } from 'react'
-import { ClockIcon, GraduationIcon, StarIcon, UsersIcon } from '@/components/Icons'
+import type { CSSProperties } from 'react'
+import { Container } from '@/components/layout'
+import { useReveal } from '@/hooks/useReveal'
 
-const items: { icon: ReactNode; label: string }[] = [
-  { icon: <ClockIcon />, label: '7+ Years Teaching' },
-  { icon: <GraduationIcon />, label: 'TESOL / TEFL Certified' },
-  { icon: <UsersIcon />, label: 'Children to Adults' },
-  { icon: <StarIcon />, label: 'Interactive English Lessons' },
+const facts = [
+  { value: '7+ years', label: 'Teaching English' },
+  { value: '120-hour', label: 'TESOL / TEFL certified' },
+  { value: 'All levels', label: 'Beginner to advanced' },
 ]
 
 export function TrustStrip() {
+  const ref = useReveal<HTMLDListElement>()
+
   return (
-    <div className="bg-white border-y border-[#EFF7FB]">
-      <div className="max-w-7xl mx-auto px-5 sm:px-6 lg:px-10 py-8">
-        <ul className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 sm:gap-6 lg:gap-0 lg:divide-x lg:divide-[#EFF7FB]">
-          {items.map((item) => (
-            <li key={item.label} className="flex items-center gap-3 lg:justify-center lg:px-6">
-              <span className="text-[#4A7C9B] shrink-0" aria-hidden="true">
-                {item.icon}
-              </span>
-              <span className="text-sm font-medium text-[#2F3A40]">{item.label}</span>
-            </li>
+    <section aria-label="At a glance" className="border-y border-line">
+      <Container>
+        <dl ref={ref} className="grid divide-y divide-line sm:grid-cols-3 sm:divide-x sm:divide-y-0">
+          {facts.map((f, i) => (
+            <div
+              key={f.label}
+              className="reveal flex flex-row-reverse items-baseline justify-between gap-4 py-4 sm:flex-col-reverse sm:items-start sm:justify-start sm:gap-1 sm:px-6 sm:py-8 sm:first:pl-0 lg:px-10"
+              style={{ '--i': i } as CSSProperties}
+            >
+              <dt className="text-sm text-muted">{f.label}</dt>
+              <dd className="font-serif text-2xl text-ink sm:text-3xl">{f.value}</dd>
+            </div>
           ))}
-        </ul>
-      </div>
-    </div>
+        </dl>
+      </Container>
+    </section>
   )
 }
