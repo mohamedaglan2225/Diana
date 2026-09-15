@@ -3,22 +3,28 @@ import { Container, Section } from '@/components/layout'
 import { ProgramCard } from '@/components/ProgramCard'
 import { Reveal } from '@/components/Reveal'
 import { SectionHeading } from '@/components/SectionHeading'
-import { programs, type ProgramChoice } from '@/data/programs'
+import { SpecialProgramCard } from '@/components/SpecialProgramCard'
+import { programs, specialPrograms, type ProgramChoice } from '@/data/programs'
 
 type Props = { onSelect: (choice: ProgramChoice) => void }
 
+/*
+ * The four core programs as a 2 × 2 grid from tablet up, then the special
+ * programs as a pair of warmer, shorter cards. Six programs, three rows on
+ * desktop.
+ */
 export function Programs({ onSelect }: Props) {
   return (
     <Section id="programs" labelledBy="programs-title" tone="sky">
       {/* Keeps links to the old #lessons anchor working. */}
       <span id="lessons" aria-hidden="true" />
       <Container>
-        <div className="flex flex-col gap-8 lg:flex-row lg:items-end lg:justify-between">
+        <div className="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
           <SectionHeading
             id="programs-title"
             eyebrow="Programs"
             title="Who I help, and how"
-            intro="Four online programs for four kinds of learners. Each one is adapted to the student’s age, level and goals, so no two lessons look exactly the same."
+            intro="Four core programs for different ages and goals, from a child’s first words to confident English at work."
           />
           <Reveal
             as="p"
@@ -26,14 +32,12 @@ export function Programs({ onSelect }: Props) {
           >
             Not sure which fits?
             <br className="hidden lg:block" />{' '}
-            <TextLink href="#booking-form" onClick={() => onSelect('unsure')}>
-              I’ll help you choose
-            </TextLink>
+            <TextLink href="#placement-test">Start with the placement test</TextLink>
           </Reveal>
         </div>
 
         {/* Each card reveals as it is reached; cards that arrive together stagger 01, 02… */}
-        <ul className="mt-14 grid gap-5 [--order-step:90ms] md:grid-cols-2 lg:mt-16 lg:gap-6">
+        <ul className="mt-12 grid gap-5 [--order-step:90ms] md:grid-cols-2 lg:mt-14 lg:gap-6">
           {programs.map((p, i) => (
             <Reveal as="li" key={p.id} className="reveal">
               <ProgramCard program={p} index={i} onSelect={onSelect} />
@@ -41,10 +45,22 @@ export function Programs({ onSelect }: Props) {
           ))}
         </ul>
 
-        <p className="mt-10 max-w-3xl text-[15px] leading-relaxed text-muted">
-          Every program can be taken as private 1-to-1 lessons or as group lessons, depending on the
-          learner’s needs and current availability.
-        </p>
+        <div className="mt-14 lg:mt-16">
+          <Reveal className="reveal flex flex-col gap-2 [--distance:12px] sm:flex-row sm:items-baseline sm:justify-between sm:gap-8">
+            <h3 className="flex items-center gap-3 text-h3 text-ink">
+              <span className="h-2 w-2 rounded-full bg-brand-accent" aria-hidden="true" />
+              Special programs
+            </h3>
+            <p className="text-[15px] text-muted">Focused options for a specific goal.</p>
+          </Reveal>
+          <ul className="mt-6 grid gap-5 [--order-step:90ms] lg:grid-cols-2 lg:gap-6">
+            {specialPrograms.map((p) => (
+              <Reveal as="li" key={p.id} className="reveal">
+                <SpecialProgramCard program={p} onSelect={onSelect} />
+              </Reveal>
+            ))}
+          </ul>
+        </div>
       </Container>
     </Section>
   )

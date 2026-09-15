@@ -27,6 +27,20 @@ export const siteConfig = {
   /** Full profile URL, e.g. 'https://instagram.com/englishwithdiana' */
   instagramUrl: null as string | null,
 
+  /**
+   * Link to the online placement test once it exists. While null, "Take
+   * Placement Test" explains honestly that the test is coming soon.
+   */
+  placementTestUrl: null as string | null,
+
+  /**
+   * Diana's video introduction. Paths are inside /public, e.g.
+   * { src: 'videos/diana-intro.mp4', poster: 'images/diana-intro-poster.jpg',
+   *   captions: 'videos/diana-intro.en.vtt' }. While null, the About section
+   * shows her photo with a "coming soon" label instead of a player.
+   */
+  introVideo: null as { src: string; poster?: string; captions?: string } | null,
+
   /** Countries where Diana has studied — provided by the site owner. */
   studiedIn: ['Russia', 'Vietnam', 'Egypt'],
 

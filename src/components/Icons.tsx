@@ -49,6 +49,54 @@ export const AwardIcon = ({ size = 26, className }: IconProps) => (
   </svg>
 )
 
+/** Conversation Club */
+export const MessagesIcon = ({ size = 22, className }: IconProps) => (
+  <svg width={size} height={size} className={className} {...base}>
+    <path d="M14 9a2 2 0 0 1-2 2H6l-4 4V4a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2z" />
+    <path d="M18 9h2a2 2 0 0 1 2 2v11l-4-4h-6a2 2 0 0 1-2-2v-1" />
+  </svg>
+)
+
+/** Travel English */
+export const MapPinIcon = ({ size = 22, className }: IconProps) => (
+  <svg width={size} height={size} className={className} {...base}>
+    <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0z" />
+    <circle cx="12" cy="10" r="3" />
+  </svg>
+)
+
+export const ClockIcon = ({ size = 22, className }: IconProps) => (
+  <svg width={size} height={size} className={className} {...base}>
+    <circle cx="12" cy="12" r="10" />
+    <path d="M12 6v6l4 2" />
+  </svg>
+)
+
+export const GlobeIcon = ({ size = 22, className }: IconProps) => (
+  <svg width={size} height={size} className={className} {...base}>
+    <circle cx="12" cy="12" r="10" />
+    <path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20" />
+    <path d="M2 12h20" />
+  </svg>
+)
+
+export const UsersIcon = ({ size = 22, className }: IconProps) => (
+  <svg width={size} height={size} className={className} {...base}>
+    <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
+    <circle cx="9" cy="7" r="4" />
+    <path d="M22 21v-2a4 4 0 0 0-3-3.87" />
+    <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+  </svg>
+)
+
+/** A camera, not a play button: used where no video can be played yet. */
+export const VideoIcon = ({ size = 22, className }: IconProps) => (
+  <svg width={size} height={size} className={className} {...base}>
+    <rect x="2" y="6" width="14" height="12" rx="2" />
+    <path d="m22 8-6 4 6 4V8z" />
+  </svg>
+)
+
 export const ArrowRightIcon = ({ size = 14, className }: IconProps) => (
   <svg width={size} height={size} className={className} {...base} strokeWidth={2}>
     <path d="M5 12h14M13 6l6 6-6 6" />

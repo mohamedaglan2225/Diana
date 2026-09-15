@@ -21,7 +21,7 @@ export function Footer() {
               English <em className="text-brand-soft">with</em> Diana
             </p>
             <p className="mt-4 max-w-xs text-[15px] leading-relaxed text-white/70">
-              Practical, personalised English lessons for kids, teens, adults and professionals.
+              Online English lessons for kids, teens, adults and professionals.
             </p>
             <p className="mt-6 font-serif text-lg text-white/85 italic">&ldquo;{siteConfig.tagline}&rdquo;</p>
           </div>
@@ -73,7 +73,7 @@ export function Footer() {
             © {new Date().getFullYear()} {siteConfig.brandName}
           </p>
           <p>
-            {siteConfig.teacherName} · TESOL / TEFL certified English teacher
+            {siteConfig.teacherName} · Online English teacher
           </p>
         </div>
       </Container>

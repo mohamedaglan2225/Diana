@@ -1,23 +1,33 @@
 import type { ComponentType } from 'react'
-import { BookIcon, BriefcaseIcon, ChatIcon, SparklesIcon } from '@/components/Icons'
+import {
+  BookIcon,
+  BriefcaseIcon,
+  ChatIcon,
+  MapPinIcon,
+  MessagesIcon,
+  SparklesIcon,
+} from '@/components/Icons'
 
-export type ProgramId = 'kids' | 'teens' | 'adults' | 'business'
+export type CoreProgramId = 'kids' | 'teens' | 'adults' | 'business'
+export type SpecialProgramId = 'conversation' | 'travel'
+export type ProgramId = CoreProgramId | SpecialProgramId
 
 /** What the enquiry form's "Program" field can hold. '' = nothing chosen. */
 export type ProgramChoice = ProgramId | 'unsure' | ''
 
+type Icon = ComponentType<{ size?: number; className?: string }>
+
 export type Program = {
-  id: ProgramId
+  id: CoreProgramId
   name: string
   /** Short audience label shown above the name. */
   audience: string
-  /** One-line positioning statement. */
+  /** One-line positioning statement (also the program's goal). */
   tagline: string
   forWhom: string
   /** Practical, outcome-phrased focus areas. */
   workOn: string[]
-  goal: string
-  icon: ComponentType<{ size?: number; className?: string }>
+  icon: Icon
   /** Visual accent for the card's badge. */
   accent: 'lavender' | 'sky' | 'sand' | 'brand'
 }
@@ -34,12 +44,11 @@ export const programs: Program[] = [
     tagline: 'Playful lessons that get children talking.',
     forWhom: 'Children who learn best through play, pictures, movement and hands-on activities.',
     workOn: [
-      'Learning everyday words through games, pictures and stories',
-      'Saying words and short phrases out loud from the very first lessons',
-      'Understanding and following simple instructions in English',
-      'Crafts, colouring and creative tasks that help new words stick',
+      'Everyday words through games, pictures and stories',
+      'Saying words and short phrases out loud from the first lessons',
+      'Understanding and following simple instructions',
+      'Creative tasks that help new words stick',
     ],
-    goal: 'To help children enjoy English and feel brave enough to use it.',
     icon: SparklesIcon,
     accent: 'lavender',
   },
@@ -53,10 +62,9 @@ export const programs: Program[] = [
     workOn: [
       'Grammar explained clearly, then practised until it makes sense',
       'Vocabulary for school topics and everyday conversation',
-      'Speaking and discussion on topics teens actually care about',
+      'Discussion on topics teens actually care about',
       'Support with school English and classwork',
     ],
-    goal: 'To make English clearer at school and more natural to use outside it.',
     icon: BookIcon,
     accent: 'sky',
   },
@@ -71,9 +79,8 @@ export const programs: Program[] = [
       'Responding more naturally in everyday conversations',
       'Pronunciation that is clear and easy to understand',
       'Practical grammar you can use while you speak',
-      'Speaking with less hesitation, one conversation at a time',
+      'Speaking with less hesitation',
     ],
-    goal: 'To build the skills and confidence to communicate more naturally in real-life situations.',
     icon: ChatIcon,
     accent: 'sand',
   },
@@ -89,14 +96,62 @@ export const programs: Program[] = [
       'The vocabulary your role and workplace actually need',
       'Speaking with confidence in professional situations',
     ],
-    goal: 'To communicate more clearly and confidently whenever work happens in English.',
     icon: BriefcaseIcon,
     accent: 'brand',
+  },
+]
+
+export type SpecialProgram = {
+  id: SpecialProgramId
+  name: string
+  /** Short label shown above the name. */
+  kind: string
+  summary: string
+  /** Heading for the topic pills. */
+  topicsLabel: string
+  topics: string[]
+  note: string
+  icon: Icon
+}
+
+/*
+ * Focused programs alongside the core four. Same content rule: no prices,
+ * session counts, group sizes or schedules until the owner confirms them.
+ */
+export const specialPrograms: SpecialProgram[] = [
+  {
+    id: 'conversation',
+    name: 'Conversation Club',
+    kind: 'Speaking practice',
+    summary: 'Improve fluency, confidence and natural speaking through guided conversation sessions.',
+    topicsLabel: 'What we practise',
+    topics: ['Everyday and current topics', 'Listening and responding', 'Speaking without hesitation', 'Natural phrases'],
+    note: 'Shaped by my experience running speaking clubs.',
+    icon: MessagesIcon,
+  },
+  {
+    id: 'travel',
+    name: 'Travel English',
+    kind: 'Short course',
+    summary: 'Practical English for travel, designed as a focused short program for people getting ready for a trip.',
+    topicsLabel: 'Situations we cover',
+    topics: [
+      'Airports',
+      'Hotels',
+      'Restaurants',
+      'Shopping',
+      'Asking for directions',
+      'Transportation',
+      'Everyday travel situations',
+    ],
+    note: 'The phrases and confidence you need before you go.',
+    icon: MapPinIcon,
   },
 ]
 
 /** Options for the enquiry form — labels always match the program names above. */
 export const programChoices: { value: Exclude<ProgramChoice, ''>; label: string }[] = [
   ...programs.map((p) => ({ value: p.id, label: p.name })),
+  ...specialPrograms.map((p) => ({ value: p.id, label: p.name })),
   { value: 'unsure', label: 'Not sure yet' },
 ]

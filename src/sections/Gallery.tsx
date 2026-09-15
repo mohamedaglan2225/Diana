@@ -13,13 +13,17 @@ const lightboxButton =
   'group flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-white/10 transition-colors duration-200 hover:bg-white/20'
 
 /*
+ * Twelve photos in an even grid (2, 3 or 4 columns) at one 4:3 crop, so the
+ * gallery takes three rows on desktop instead of a tall masonry column.
+ *
  * Motion: each frame is already in place (a soft sky tint) and its photo
  * rises into it from the bottom, settling from a slight zoom, then the
  * caption. Photos that arrive together follow each other quickly. Hover
  * (mouse only) zooms the photo a touch and darkens its caption.
  *
- * Lightbox: opens with the shared dialog motion; stepping between photos
- * cross-fades, and the neighbours are preloaded so the fade has a photo to show.
+ * Lightbox: opens with the shared dialog motion and shows the full,
+ * uncropped photo; stepping between photos cross-fades, and the neighbours
+ * are preloaded so the fade has a photo to show.
  */
 export function Gallery() {
   const [index, setIndex] = useState<number | null>(null)
@@ -54,9 +58,9 @@ export function Gallery() {
           intro="Photos from my own lessons. This is what learning with me actually looks like."
         />
 
-        <div className="mt-14 columns-1 gap-5 [--order-step:90ms] sm:columns-2 lg:mt-16 lg:columns-3 lg:gap-6">
+        <div className="mt-12 grid grid-cols-2 gap-x-3 gap-y-5 [--order-step:70ms] sm:grid-cols-3 sm:gap-x-4 lg:mt-14 lg:grid-cols-4 lg:gap-x-5 lg:gap-y-6">
           {galleryPhotos.map((img, i) => (
-            <Reveal as="figure" key={img.src} className="group mb-5 break-inside-avoid lg:mb-6">
+            <Reveal as="figure" key={img.src} className="group">
               <button
                 type="button"
                 onClick={() => setIndex(i)}
@@ -69,7 +73,7 @@ export function Gallery() {
                       <source
                         type="image/webp"
                         srcSet={img.srcSet}
-                        sizes="(min-width: 1024px) 380px, (min-width: 640px) 45vw, 90vw"
+                        sizes="(min-width: 1024px) 270px, (min-width: 640px) 31vw, 46vw"
                       />
                       <img
                         src={img.src}
@@ -78,14 +82,14 @@ export function Gallery() {
                         height={img.height}
                         loading="lazy"
                         decoding="async"
-                        className={`w-full object-cover transition-[scale] duration-700 ease-soft group-hover:scale-[1.035] ${img.ratio}`}
+                        className="aspect-4/3 w-full object-cover transition-[scale] duration-700 ease-soft group-hover:scale-[1.035]"
                         style={{ objectPosition: img.position }}
                       />
                     </picture>
                   </span>
                 </span>
               </button>
-              <figcaption className="reveal mt-3 text-sm text-muted [--delay:350ms] [--distance:6px]">
+              <figcaption className="reveal mt-2.5 text-[13px] leading-snug text-muted [--delay:350ms] [--distance:6px] sm:text-sm">
                 <span className="transition-colors duration-300 group-hover:text-ink">{img.caption}</span>
               </figcaption>
             </Reveal>

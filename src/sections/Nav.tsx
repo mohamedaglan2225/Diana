@@ -87,7 +87,7 @@ export function Nav() {
         </a>
 
         <div ref={listRef} className="relative hidden lg:block">
-          <ul className="flex items-center gap-8">
+          <ul className="flex items-center gap-6 xl:gap-8">
             {navLinks.map((l) => {
               const isActive = active === l.id
               return (
@@ -96,7 +96,7 @@ export function Nav() {
                   <a
                     href={`#${l.id}`}
                     aria-current={isActive ? 'true' : undefined}
-                    className={`relative py-2 text-[15px] transition-colors duration-200 after:absolute after:inset-x-0 after:-bottom-0.5 after:h-px after:origin-left after:scale-x-0 after:bg-current after:opacity-30 after:transition-transform after:duration-300 after:ease-soft ${
+                    className={`relative py-2 text-[15px] whitespace-nowrap transition-colors duration-200 after:absolute after:inset-x-0 after:-bottom-0.5 after:h-px after:origin-left after:scale-x-0 after:bg-current after:opacity-30 after:transition-transform after:duration-300 after:ease-soft ${
                       isActive ? 'text-ink' : 'text-muted hover:text-ink hover:after:scale-x-100'
                     }`}
                   >

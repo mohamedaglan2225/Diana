@@ -54,14 +54,6 @@ export const aboutPhoto = photo(
   '50% 64%',
 )
 
-export const approachPhoto = photo(
-  'lesson-board-clothes.jpg',
-  'Diana and a young student matching clothing flashcards on the whiteboard',
-  1600,
-  1200,
-  '44% 50%',
-)
-
 /**
  * The TESOL certificate, rendered from the owner's PDF at 2400px wide so the
  * fine print stays readable. The JPEG (1600px) is the fallback; the WebP
@@ -74,14 +66,12 @@ export const certificateImage = {
 }
 
 /**
- * Editorial gallery — a deliberate mix of orientations, no repeats and no
- * photo used elsewhere on the page.
+ * Gallery — twelve of Diana's own classroom photos, no repeats and no photo
+ * used elsewhere on the page. The grid shows every photo at the same 4:3
+ * crop (so 12 fill 2, 3 or 4 even columns); `position` keeps faces in frame,
+ * and the lightbox always shows the full, uncropped photo.
  */
-export type GalleryPhoto = Photo & {
-  caption: string
-  /** Tailwind aspect class — kept at or very near the photo's native ratio. */
-  ratio: string
-}
+export type GalleryPhoto = Photo & { caption: string }
 
 const galleryItem = (
   file: string,
@@ -89,9 +79,8 @@ const galleryItem = (
   width: number,
   height: number,
   caption: string,
-  ratio: string,
   position = '50% 45%',
-): GalleryPhoto => ({ ...photo(file, alt, width, height, position), caption, ratio })
+): GalleryPhoto => ({ ...photo(file, alt, width, height, position), caption })
 
 export const galleryPhotos: GalleryPhoto[] = [
   galleryItem(
@@ -100,7 +89,6 @@ export const galleryPhotos: GalleryPhoto[] = [
     1600,
     1200,
     'Creative classroom activities',
-    'aspect-4/3',
   ),
   galleryItem(
     'outdoor-storytelling.jpg',
@@ -108,8 +96,7 @@ export const galleryPhotos: GalleryPhoto[] = [
     1200,
     1600,
     'English beyond the classroom',
-    'aspect-3/4',
-    '50% 40%',
+    '50% 38%',
   ),
   galleryItem(
     'lesson-board-pointing.jpg',
@@ -117,7 +104,6 @@ export const galleryPhotos: GalleryPhoto[] = [
     1600,
     1200,
     'Grammar, practised out loud',
-    'aspect-4/3',
     '50% 40%',
   ),
   galleryItem(
@@ -126,7 +112,14 @@ export const galleryPhotos: GalleryPhoto[] = [
     1600,
     900,
     'Interactive learning',
-    'aspect-16/9',
+  ),
+  galleryItem(
+    'lesson-board-clothes.jpg',
+    'Diana and a young student matching clothing flashcards on the whiteboard',
+    1600,
+    1200,
+    'Words you can see and match',
+    '44% 50%',
   ),
   galleryItem(
     'letters-to-santa.jpg',
@@ -134,7 +127,6 @@ export const galleryPhotos: GalleryPhoto[] = [
     1600,
     1200,
     'Celebrating progress',
-    'aspect-4/3',
   ),
   galleryItem(
     'floor-reading-circle.jpg',
@@ -142,7 +134,6 @@ export const galleryPhotos: GalleryPhoto[] = [
     1600,
     1200,
     'Learning together',
-    'aspect-3/2',
     '50% 55%',
   ),
   galleryItem(
@@ -151,7 +142,6 @@ export const galleryPhotos: GalleryPhoto[] = [
     1600,
     900,
     'Lessons with a bit of fun',
-    'aspect-16/9',
   ),
   galleryItem(
     'paper-craft-group.jpg',
@@ -159,7 +149,6 @@ export const galleryPhotos: GalleryPhoto[] = [
     1600,
     1200,
     'Making English hands-on',
-    'aspect-4/3',
   ),
   galleryItem(
     'worksheet-practice.jpg',
@@ -167,7 +156,6 @@ export const galleryPhotos: GalleryPhoto[] = [
     1600,
     1200,
     'Practice with support',
-    'aspect-4/3',
     '50% 50%',
   ),
   galleryItem(
@@ -176,7 +164,6 @@ export const galleryPhotos: GalleryPhoto[] = [
     1600,
     900,
     'Classroom moments',
-    'aspect-16/9',
   ),
   galleryItem(
     'outdoor-group-lesson.jpg',
@@ -184,6 +171,5 @@ export const galleryPhotos: GalleryPhoto[] = [
     1280,
     853,
     'Speaking in front of a crowd',
-    'aspect-3/2',
   ),
 ]

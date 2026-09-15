@@ -36,85 +36,84 @@ function CertificatePicture({ sizes, className }: { sizes: string; className: st
 }
 
 /*
- * Motion: the certificate card rises in; hovering it (mouse only) zooms the
- * thumbnail very slightly and nudges the button's arrow. The viewer opens
- * with the shared dialog motion. Timeline entries reveal as they are reached.
+ * Compact on purpose: the heading and the certificate share one row, and the
+ * work history runs as a horizontal timeline on desktop instead of a long CV
+ * column. Motion: the certificate card rises in; hovering it (mouse only)
+ * zooms the thumbnail very slightly and nudges the button's arrow. The viewer
+ * opens with the shared dialog motion. Timeline entries reveal as reached.
  */
 export function Experience() {
   const cardRef = useReveal()
   const [viewing, setViewing] = useState(false)
 
   return (
-    <Section id="experience" labelledBy="experience-title" tone="sky">
+    <Section id="experience" labelledBy="experience-title" tone="mist">
       <Container>
-        <SectionHeading
-          id="experience-title"
-          eyebrow="Experience & qualifications"
-          title="Experience that supports your progress"
-          intro="Private students, language schools and classrooms in different countries. Each one added something to how I teach."
-        />
+        <div className="grid gap-10 lg:grid-cols-[0.9fr_1.1fr] lg:items-center lg:gap-16">
+          <SectionHeading
+            id="experience-title"
+            eyebrow="Experience & qualifications"
+            title="Experience that supports your progress"
+            intro="Private students, language schools and classrooms in different countries. Each one added something to how I teach."
+          />
 
-        <div className="mt-14 grid gap-10 lg:mt-16 lg:grid-cols-[0.8fr_1.2fr] lg:gap-16">
           {/* Qualification */}
-          <div>
-            <div
-              ref={cardRef}
-              id="certification"
-              className="hover-card group/cert reveal rounded-card bg-surface p-8 shadow-card ring-1 ring-line sm:p-10 lg:sticky lg:top-28"
-            >
-              {certificateSrc ? (
-                // Mouse shortcut to the viewer; keyboard and screen-reader users get the button below.
-                <button
-                  type="button"
-                  tabIndex={-1}
-                  aria-hidden="true"
-                  onClick={() => setViewing(true)}
-                  className="block w-full overflow-hidden rounded-xl ring-1 ring-line transition-shadow duration-500 ease-soft group-hover/cert:ring-brand-soft"
-                >
-                  <CertificatePicture
-                    sizes="(min-width: 1024px) 400px, (min-width: 640px) 560px, 85vw"
-                    className="aspect-[2400/1696] w-full bg-surface transition-[scale] duration-700 ease-soft group-hover/cert:scale-[1.02]"
-                  />
-                </button>
-              ) : (
-                <span className="flex h-14 w-14 items-center justify-center rounded-full bg-sky text-brand" aria-hidden="true">
-                  <AwardIcon />
-                </span>
-              )}
+          <div
+            ref={cardRef}
+            id="certification"
+            className="hover-card group/cert reveal grid gap-6 rounded-card bg-surface p-5 shadow-card ring-1 ring-line sm:grid-cols-[minmax(0,15rem)_1fr] sm:items-center sm:p-6"
+          >
+            {certificateSrc ? (
+              // Mouse shortcut to the viewer; keyboard and screen-reader users get the button beside it.
+              <button
+                type="button"
+                tabIndex={-1}
+                aria-hidden="true"
+                onClick={() => setViewing(true)}
+                className="block w-full overflow-hidden rounded-xl ring-1 ring-line transition-shadow duration-500 ease-soft group-hover/cert:ring-brand-soft"
+              >
+                <CertificatePicture
+                  sizes="(min-width: 640px) 240px, 85vw"
+                  className="aspect-[2400/1696] w-full bg-surface transition-[scale] duration-700 ease-soft group-hover/cert:scale-[1.02]"
+                />
+              </button>
+            ) : (
+              <span className="flex h-14 w-14 items-center justify-center rounded-full bg-sky text-brand" aria-hidden="true">
+                <AwardIcon />
+              </span>
+            )}
 
-              <p className="mt-7 text-xs font-semibold tracking-[0.18em] text-brand uppercase">Qualification</p>
-              <h3 className="mt-3 text-h3 text-ink">{certificate.name}</h3>
-              <p className="mt-2 text-[15px] font-medium text-ink">{certificate.issuer}</p>
-              <p className="mt-5 text-[15px] leading-relaxed text-muted">
-                An accredited course in teaching English to non-native learners, in overseas and online
-                classrooms. Accredited by ACCREDITAT and The CPD Certification Service.
+            <div>
+              <p className="text-xs font-semibold tracking-[0.18em] text-brand uppercase">Qualification</p>
+              <h3 className="mt-2 text-xl leading-snug text-ink sm:text-2xl">{certificate.name}</h3>
+              <p className="mt-1 text-[15px] font-medium text-ink">{certificate.issuer}</p>
+              <p className="mt-3 text-sm leading-relaxed text-muted">
+                Accredited by ACCREDITAT and The CPD Certification Service.
               </p>
               {certificateSrc && (
-                <Button variant="secondary" size="sm" arrow className="mt-7" onClick={() => setViewing(true)}>
+                <Button variant="secondary" size="sm" arrow className="mt-5" onClick={() => setViewing(true)}>
                   View certificate
                 </Button>
               )}
             </div>
           </div>
-
-          {/* Experience timeline */}
-          <ol className="border-t border-brand-soft">
-            {roles.map((r) => (
-              <Reveal
-                as="li"
-                key={r.period + r.role}
-                className="reveal grid gap-2 border-b border-brand-soft py-8 [--distance:16px] sm:grid-cols-[9.5rem_1fr] sm:gap-8"
-              >
-                <p className="pt-1 text-sm font-medium text-brand tabular-nums">{r.period}</p>
-                <div>
-                  <h3 className="text-xl text-ink">{r.role}</h3>
-                  {r.org && <p className="mt-1 text-[15px] font-medium text-ink/80">{r.org}</p>}
-                  <p className="mt-3 text-[15px] leading-relaxed text-muted">{r.desc}</p>
-                </div>
-              </Reveal>
-            ))}
-          </ol>
         </div>
+
+        {/* Experience timeline: a row on desktop, a list on phones. */}
+        <ol className="mt-14 grid gap-x-8 [--order-step:110ms] sm:grid-cols-2 lg:mt-16 lg:grid-cols-5 lg:gap-x-6">
+          {roles.map((r, i) => (
+            <Reveal
+              as="li"
+              key={r.period + r.role}
+              className="reveal relative border-t border-brand-soft pt-6 pb-8 [--distance:14px] before:absolute before:-top-[5px] before:left-0 before:h-2.5 before:w-2.5 before:rounded-full before:bg-brand-accent lg:pb-0"
+            >
+              <p className={`text-sm font-medium tabular-nums ${i === 0 ? 'text-brand' : 'text-muted'}`}>{r.period}</p>
+              <h3 className="mt-2 text-lg leading-snug text-ink">{r.role}</h3>
+              {r.org && <p className="mt-1 text-sm font-medium text-ink/80">{r.org}</p>}
+              <p className="mt-2 text-sm leading-relaxed text-muted">{r.desc}</p>
+            </Reveal>
+          ))}
+        </ol>
       </Container>
 
       {certificateSrc && (

@@ -4,6 +4,7 @@ const tones = {
   canvas: 'bg-canvas',
   surface: 'bg-surface',
   sky: 'bg-sky',
+  mist: 'bg-mist',
   sand: 'bg-sand',
   night: 'tone-dark bg-night text-white',
   brand: 'tone-dark bg-brand text-white',
@@ -26,7 +27,7 @@ export function Section({ id, labelledBy, tone = 'canvas', className = '', child
     <section
       id={id}
       aria-labelledby={labelledBy}
-      className={`py-20 sm:py-24 lg:py-32 ${tones[tone]} ${className}`}
+      className={`py-16 sm:py-20 lg:py-24 ${tones[tone]} ${className}`}
     >
       {children}
     </section>

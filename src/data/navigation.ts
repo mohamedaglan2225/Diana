@@ -1,10 +1,10 @@
 /** Main navigation — keep in the same order the sections appear on the page. */
 export const navLinks = [
   { label: 'Programs', id: 'programs' },
-  { label: 'Your Progress', id: 'progress' },
+  { label: 'How It Works', id: 'how-it-works' },
+  { label: 'Placement Test', id: 'placement-test' },
   { label: 'About', id: 'about' },
   { label: 'Gallery', id: 'gallery' },
-  { label: 'Experience', id: 'experience' },
   { label: 'FAQ', id: 'faq' },
 ] as const
 

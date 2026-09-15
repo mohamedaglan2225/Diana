@@ -9,9 +9,10 @@
  *
  * Contrast notes (WCAG AA, normal text):
  *   ink    on any light surface  > 10:1
- *   muted  on canvas/sky/sand     ≥ 5.3:1
+ *   muted  on canvas/sky/sand/mist ≥ 5.3:1
  *   subtle on surface (white)     ≈ 4.5:1  — placeholders and small meta only
  *   white  on brand               ≈ 5.7:1  — body copy on brand needs ≥ 90% white
+ *   brand  on sky-deep            ≈ 4.6:1  — pills and small labels
  *   brand-accent is decorative only; never use it for text.
  */
 @theme {
@@ -23,6 +24,8 @@
   --color-canvas: #FAF9F6;
   --color-surface: #FFFFFF;
   --color-sky: #EEF5F9;
+  --color-sky-deep: #DDEBF4;
+  --color-mist: #F1F4F7;
   --color-sand: #F4EEE6;
   --color-night: #1E2F3A;
 
@@ -130,6 +133,14 @@
   }
   .skip-link:focus {
     transform: translateY(0);
+  }
+
+  /* A soft baby-blue light in the hero's top corner, so the page doesn't open on flat white. */
+  .hero-wash {
+    background:
+      radial-gradient(52rem 34rem at 92% 6%, var(--color-sky), transparent 70%),
+      radial-gradient(30rem 22rem at 0% 100%, var(--color-sand), transparent 75%),
+      var(--color-canvas);
   }
 
   /*

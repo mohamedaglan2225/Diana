@@ -1,7 +1,7 @@
 import type { AnchorHTMLAttributes, ButtonHTMLAttributes, ReactNode } from 'react'
 import { ArrowRightIcon } from './Icons'
 
-type Variant = 'primary' | 'secondary'
+type Variant = 'primary' | 'secondary' | 'light'
 type Size = 'sm' | 'md'
 
 /*
@@ -22,6 +22,8 @@ const variants: Record<Variant, string> = {
   primary:
     'bg-brand text-white shadow-button hover:-translate-y-0.5 hover:bg-brand-dark hover:shadow-button-hover active:shadow-button',
   secondary: 'border border-ink/15 text-ink hover:border-ink/35 hover:bg-surface',
+  /** For dark (night) sections. */
+  light: 'bg-white text-ink shadow-button hover:-translate-y-0.5 hover:bg-sky hover:shadow-button-hover active:shadow-button',
 }
 
 const classes = (variant: Variant, size: Size, className = '') =>
@@ -32,7 +34,7 @@ type Common = { variant?: Variant; size?: Size; arrow?: boolean; children: React
 /** Nudged by `.link-arrow` in index.css, on its own hover or a whole card's. */
 const Arrow = () => <ArrowRightIcon className="link-arrow" />
 
-/** A link styled as a button — every CTA on this page is an in-page anchor. */
+/** A link styled as a button — for in-page anchors and, once configured, the placement test link. */
 export function ButtonLink({
   variant = 'primary',
   size = 'md',

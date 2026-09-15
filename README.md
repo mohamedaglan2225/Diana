@@ -23,40 +23,50 @@ image path — set `PUBLIC_BASE_PATH=/my-sub-path/` before `npm run build`.
 
 ## Page structure
 
-`src/App.tsx` composes the page, in this order:
+`src/App.tsx` composes the page (V2), in this order:
 
 | Section | File | Anchor |
 | --- | --- | --- |
 | Navigation | `sections/Nav.tsx` | — |
 | Hero | `sections/Hero.tsx` | `#top` |
-| At-a-glance strip | `sections/TrustStrip.tsx` | — |
-| Programs | `sections/Programs.tsx` + `data/programs.ts` | `#programs` (old `#lessons` still works) |
-| Learning journey | `sections/LearningJourney.tsx` | `#progress` |
-| How lessons work | `sections/HowLessonsWork.tsx` | `#how-lessons-work` |
-| About | `sections/About.tsx` | `#about` |
-| International perspective | `sections/InternationalExperience.tsx` | `#international` |
-| Approach | `sections/Approach.tsx` | `#my-approach` |
+| Trust bar (the one place credentials appear as headline facts) | `sections/TrustStrip.tsx` | — |
+| Programs: 4 core + Special programs (Conversation Club, Travel English) | `sections/Programs.tsx` + `data/programs.ts` | `#programs` |
+| How it works: 4-step path + lesson formats | `sections/HowItWorks.tsx` | `#how-it-works` |
+| Placement test (marketing entry point, no test engine) | `sections/PlacementTest.tsx` + `data/levels.ts` | `#placement-test` |
+| About: video intro, short bio, approach | `sections/About.tsx` + `components/VideoIntro.tsx` | `#about` |
+| Experience & qualifications | `sections/Experience.tsx` + `data/experience.ts` | `#experience`, `#certification` |
 | Gallery | `sections/Gallery.tsx` + `lib/images.ts` | `#gallery` |
 | Student stories (hidden until real reviews exist) | `sections/StudentStories.tsx` + `data/testimonials.ts` | `#stories` |
-| Experience & qualifications | `sections/Experience.tsx` + `data/experience.ts` | `#experience`, `#certification` |
 | FAQ | `sections/FAQ.tsx` + `data/faq.ts` | `#faq` |
 | Contact / enquiry form | `sections/Contact.tsx` | `#contact`, `#booking-form` |
 | Footer | `sections/Footer.tsx` | — |
 
+Anchors from earlier versions still land in the right place (see
+`hooks/useHashScroll.ts`): `#lessons` → Programs, `#progress` and
+`#how-lessons-work` → How it works, `#international` and `#my-approach` → About.
+
 Shared pieces live in `src/components/` (`Button`, `SectionHeading`,
-`Section`/`Container`, `Modal`, `ProgramCard`, `Photo`, `Icons`). Navigation
-links are defined once in `src/data/navigation.ts`.
+`Section`/`Container`, `Modal`, `ProgramCard`, `SpecialProgramCard`,
+`VideoIntro`, `Photo`, `Reveal`, `Icons`). Navigation links are defined once
+in `src/data/navigation.ts`.
 
 **Program → form flow.** The selected program lives in `App` state. Each
 program card's "Ask about …" link sets it and jumps to `#booking-form`, where
 the "Program" field is already filled in. Form options come from
-`programChoices` in `data/programs.ts`, so names always match the cards.
+`programChoices` in `data/programs.ts` (core and special programs), so names
+always match the cards. The placement test's "send a short enquiry" fallback
+sets it to "Not sure yet".
+
+**Avoiding repetition.** Each message has one home: credentials in the trust
+bar, lesson formats in How it works, Diana's approach in About, the detailed
+history and certificate in Experience. The FAQ only answers what the page
+doesn't already answer in place.
 
 ## Design tokens
 
 All colours, type sizes, radii and shadows are defined in the `@theme` block
 of `src/index.css`. The default Tailwind palette is switched off, so use the
-semantic utilities (`bg-canvas`, `bg-sky`, `bg-sand`, `bg-night`, `text-ink`,
+semantic utilities (`bg-canvas`, `bg-sky`, `bg-sky-deep`, `bg-mist`, `bg-sand`, `bg-night`, `text-ink`,
 `text-muted`, `bg-brand`, `border-line`, `text-h2`, `rounded-card`,
 `shadow-card`, …) rather than hex values. Global element styles sit in
 `@layer base`, so utilities always win.
@@ -82,6 +92,8 @@ Still missing:
 | `email` | The address enquiries should reach |
 | `instagramUrl` | Full profile URL |
 | `siteUrl` | Public URL with trailing slash, e.g. `'https://englishwithdiana.com/'`. Enables canonical, `og:url`, absolute social image, `twitter:image` and `sitemap.xml` |
+| `placementTestUrl` | Link to the real placement test once it exists. While `null`, "Take Placement Test" is labelled "Coming soon" and, when pressed, says so plainly and offers the enquiry form |
+| `introVideo` | `{ src, poster?, captions? }`, paths inside `public/` (e.g. `videos/diana-intro.mp4`, a WebVTT captions file). While `null`, About shows Diana's classroom photo with a "Video introduction · Coming soon" label, never a fake player |
 
 Real student or parent reviews (with permission) go in
 `src/data/testimonials.ts`; the Student Stories section appears automatically.
@@ -158,8 +170,11 @@ in `src/index.css`.
 ## Accessibility notes
 
 - `#6F9FBD` (`brand-accent`) is decorative only; text and buttons use
-  `brand` (`#3F6C88`, 5.7:1 with white). Body copy on the blue Contact band
-  uses at least 90% white.
+  `brand` (`#3F6C88`, 5.7:1 with white). On the dark Placement test band,
+  body copy is at least 70% white and the button uses the `light` variant.
+- The placement-test button stays a real, focusable button while the test
+  doesn't exist; it is described by its "Coming soon" label and announces an
+  explanation through a polite live region when pressed.
 - Dialogs use native `<dialog>` + `showModal()`: focus stays inside, Escape
   and backdrop click close, page scroll is locked and focus returns to the
   trigger.

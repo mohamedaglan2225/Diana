@@ -1,10 +1,11 @@
 export type FaqItem = { question: string; answer: string }
 
 /*
- * Only questions the site can answer truthfully today. Prices are
- * intentionally not published, and lesson length, schedule and group size
- * are not stated until the owner confirms them. Visible copy avoids em / en
- * dashes.
+ * Only questions the site can answer truthfully today, and only where the
+ * page doesn't already answer them in place (formats live in How It Works,
+ * audiences in Programs). Prices are intentionally not published, and lesson
+ * length, schedule and group size are not stated until the owner confirms
+ * them. Visible copy avoids em / en dashes.
  */
 export const faq: FaqItem[] = [
   {
@@ -12,28 +13,18 @@ export const faq: FaqItem[] = [
     answer: 'Yes. All lessons take place online, so you can learn from home or wherever you are.',
   },
   {
-    question: 'Do you offer private lessons or group lessons?',
+    question: 'Do I need to take a placement test?',
     answer:
-      'Both. Private 1-to-1 lessons are built entirely around one learner. Group lessons give students more chances to communicate and practise with others. The right option depends on your goals and current availability.',
-  },
-  {
-    question: 'Who are the lessons for?',
-    answer:
-      'Children, teenagers, adults and professionals. There are four programs: Kids English, English for Teens, Adult English and Business English.',
+      'Yes. Every new student starts with one, so lessons match your real level rather than a guess. The result is an estimated English level, which I review with you before recommending a program, because speaking is best judged in conversation.',
   },
   {
     question: 'What levels do you teach?',
     answer:
-      "All levels, from beginner to advanced. If you're not sure what your level is, that's completely fine. We'll work it out together at the start.",
+      "All levels, from beginner to advanced. You don't need to know your level in advance. That's exactly what the placement test and a short review with me are for.",
   },
   {
     question: 'How do I choose the right program or format?',
     answer:
-      "Pick the options that sound closest, or choose “Not sure yet” in the enquiry form. Tell me a little about the learner and their goals, and I'll suggest where to start.",
-  },
-  {
-    question: 'What happens before we start?',
-    answer:
-      'You send a short enquiry about who the lessons are for and what you’d like to improve. From there, we look at the current level and goals together, so the first lessons start in the right place.',
+      "Start with the placement test, or choose “Not sure yet” in the enquiry form and tell me a little about the learner and their goals. I'll recommend a program and a lesson format that fits.",
   },
 ]

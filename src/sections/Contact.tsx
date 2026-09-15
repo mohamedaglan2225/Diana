@@ -1,21 +1,16 @@
 import { useId, useState, type FormEvent, type ReactNode } from 'react'
-import { Button } from '@/components/Button'
+import { Button, TextLink } from '@/components/Button'
 import { InstagramIcon, MailIcon, WhatsAppIcon } from '@/components/Icons'
 import { Container, Section } from '@/components/layout'
 import { SectionHeading } from '@/components/SectionHeading'
+import { levels } from '@/data/levels'
 import { programChoices, type ProgramChoice } from '@/data/programs'
 import { useReveal } from '@/hooks/useReveal'
 import { emailLink, instagramLink, siteConfig, whatsappLink } from '@/site.config'
 
 const learners = ['Child', 'Teenager', 'Adult']
-const levels = ['Beginner', 'Elementary', 'Intermediate', 'Upper Intermediate', 'Advanced', 'Not sure']
+const levelOptions = [...levels, 'Not sure']
 const formats = ['Private 1-to-1', 'Group', 'Not sure yet']
-
-const steps = [
-  'Send a short enquiry using the form.',
-  'I’ll reply to talk through your level, goals and the right lesson option for you.',
-  'We plan your first online lessons around you.',
-]
 
 /** Border warms on hover; focus adds a soft brand ring. Both ease in over 200ms. */
 const fieldClass =
@@ -29,8 +24,8 @@ type Props = {
 
 export function Contact({ program, onProgramChange }: Props) {
   const ids = useId()
-  // The page's closing moment: heading, then the steps, then the form card.
-  const stepsRef = useReveal<HTMLOListElement>()
+  // The page's closing moment: heading, then the note, then the form card.
+  const noteRef = useReveal()
   const cardRef = useReveal()
   const [form, setForm] = useState({ name: '', reply: '', learner: '', level: '', format: '', message: '' })
   const [status, setStatus] = useState<string | null>(null)
@@ -76,30 +71,22 @@ export function Contact({ program, onProgramChange }: Props) {
   ].filter(Boolean) as { href: string; label: string; detail: string; icon: ReactNode }[]
 
   return (
-    <Section id="contact" labelledBy="contact-title" tone="brand">
-      <Container className="grid gap-14 lg:grid-cols-[0.9fr_1.1fr] lg:gap-20">
+    <Section id="contact" labelledBy="contact-title" tone="sky">
+      <Container className="grid gap-12 lg:grid-cols-[0.85fr_1.15fr] lg:gap-20">
         <div className="lg:pt-6">
           <SectionHeading
             id="contact-title"
-            tone="brand"
             eyebrow="Book a lesson"
-            title="Not sure which program or lesson format is right for you?"
-            intro="Tell me about your goals and I’ll help you choose the right option. Lessons are online, so you can join from wherever you are."
+            title="Let’s find the right lessons for you"
+            intro="Tell me a little about the learner and their goals. I’ll reply to talk through level, program and lesson format."
           />
 
-          <ol ref={stepsRef} className="reveal mt-10 space-y-5 [--delay:120ms] [--distance:16px]">
-            {steps.map((s, i) => (
-              <li key={s} className="flex gap-4 text-[15px] leading-relaxed text-white">
-                <span
-                  className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full border border-white/40 font-serif text-sm"
-                  aria-hidden="true"
-                >
-                  {i + 1}
-                </span>
-                <span className="pt-1">{s}</span>
-              </li>
-            ))}
-          </ol>
+          <div ref={noteRef} className="reveal mt-8 [--delay:120ms] [--distance:16px]">
+            <p className="text-[15px] leading-relaxed text-muted">
+              Want to check your level first?{' '}
+              <TextLink href="#placement-test">About the placement test</TextLink>
+            </p>
+          </div>
 
           {channels.length > 0 && (
             <ul className="mt-10 flex flex-wrap gap-3">
@@ -108,12 +95,14 @@ export function Contact({ program, onProgramChange }: Props) {
                   <a
                     href={c.href}
                     {...(c.href.startsWith('http') ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
-                    className="flex items-center gap-3 rounded-2xl border border-white/30 px-4 py-3 text-white transition-colors hover:bg-white/10"
+                    className="flex items-center gap-3 rounded-2xl border border-line bg-surface px-4 py-3 text-ink transition-colors hover:border-brand-soft"
                   >
-                    <span aria-hidden="true">{c.icon}</span>
+                    <span className="text-brand" aria-hidden="true">
+                      {c.icon}
+                    </span>
                     <span className="text-sm">
                       <span className="block font-medium">{c.label}</span>
-                      <span className="block text-white/90">{c.detail}</span>
+                      <span className="block text-muted">{c.detail}</span>
                     </span>
                   </a>
                 </li>
@@ -126,7 +115,7 @@ export function Contact({ program, onProgramChange }: Props) {
         <div
           ref={cardRef}
           id="booking-form"
-          className="reveal rounded-[1.75rem] bg-surface p-6 text-ink shadow-lift [--delay:200ms] [--distance:28px] sm:p-9 lg:p-10"
+          className="reveal rounded-[1.75rem] bg-surface p-6 text-ink shadow-lift ring-1 ring-line [--delay:200ms] [--distance:28px] sm:p-9 lg:p-10"
         >
           <h3 className="text-h3">Send an enquiry</h3>
           <p className="mt-2 text-[15px] text-muted">It only takes a minute. Fields marked * are required.</p>
@@ -183,7 +172,7 @@ export function Contact({ program, onProgramChange }: Props) {
                 className={fieldClass}
               >
                 <option value="">Select</option>
-                {levels.map((o) => (
+                {levelOptions.map((o) => (
                   <option key={o}>{o}</option>
                 ))}
               </select>
