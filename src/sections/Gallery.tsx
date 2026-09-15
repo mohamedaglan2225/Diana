@@ -1,102 +1,186 @@
-import { useCallback, useEffect, useState } from 'react'
-import { CloseIcon } from '@/components/Icons'
-import { useReveal } from '@/hooks/useReveal'
+import { useEffect, useRef, useState, type KeyboardEvent } from 'react'
+import { Button } from '@/components/Button'
+import { ArrowLeftIcon, ArrowRightIcon, CloseIcon } from '@/components/Icons'
+import { Container, Section } from '@/components/layout'
+import { Modal } from '@/components/Modal'
+import { Reveal } from '@/components/Reveal'
+import { SectionHeading } from '@/components/SectionHeading'
 import { galleryPhotos } from '@/lib/images'
-import type { GalleryPhoto } from '@/lib/images'
 
+const count = galleryPhotos.length
+const lightboxSizes = '(min-width: 1024px) 1024px, 100vw'
+
+/*
+ * Until "Show all" is pressed the grid keeps to its first rows: 6 photos in
+ * 2 or 3 columns, 8 in 4 columns. Hidden photos are `display: none`, so they
+ * are out of the tab order; the lightbox still steps through all of them.
+ */
+const collapsedClass = (i: number) => (i < 6 ? '' : i < 8 ? 'hidden lg:block' : 'hidden')
+
+const lightboxButton =
+  'group flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-white/10 transition-colors duration-200 hover:bg-white/20'
+
+/*
+ * Twelve photos in an even grid (2, 3 or 4 columns) at one 4:3 crop. Only
+ * the first rows show at first, so the gallery stays short; "Show all
+ * photos" reveals the rest and moves focus to the first new one.
+ *
+ * Motion: each frame is already in place (a soft sky tint) and its photo
+ * rises into it from the bottom, settling from a slight zoom, then the
+ * caption. Photos that arrive together follow each other quickly. Hover
+ * (mouse only) zooms the photo a touch and darkens its caption.
+ *
+ * Lightbox: opens with the shared dialog motion and shows the full,
+ * uncropped photo; stepping between photos cross-fades, and the neighbours
+ * are preloaded so the fade has a photo to show.
+ */
 export function Gallery() {
-  const ref = useReveal()
-  const [lightbox, setLightbox] = useState<GalleryPhoto | null>(null)
+  const [index, setIndex] = useState<number | null>(null)
+  const [expanded, setExpanded] = useState(false)
+  const gridRef = useRef<HTMLDivElement>(null)
+  // Index of the first photo that was hidden when "Show all" was pressed.
+  const focusFrom = useRef(-1)
 
-  const close = useCallback(() => setLightbox(null), [])
+  const expand = () => {
+    const buttons = gridRef.current ? [...gridRef.current.querySelectorAll('button')] : []
+    focusFrom.current = buttons.findIndex((b) => b.offsetParent === null)
+    setExpanded(true)
+  }
 
   useEffect(() => {
-    if (!lightbox) return
-    const onKey = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') close()
+    if (!expanded || focusFrom.current < 0) return
+    gridRef.current?.querySelectorAll('button')[focusFrom.current]?.focus()
+    focusFrom.current = -1
+  }, [expanded])
+
+  const close = () => setIndex(null)
+  const step = (delta: number) => setIndex((i) => (i === null ? i : (i + delta + count) % count))
+
+  const onKeyDown = (e: KeyboardEvent<HTMLDialogElement>) => {
+    if (e.key === 'ArrowRight') step(1)
+    if (e.key === 'ArrowLeft') step(-1)
+  }
+
+  useEffect(() => {
+    if (index === null) return
+    for (const n of [index + 1, index - 1 + count]) {
+      const photo = galleryPhotos[n % count]
+      const img = new Image()
+      img.sizes = lightboxSizes
+      img.srcset = photo.srcSet
     }
-    document.addEventListener('keydown', onKey)
-    const { overflow } = document.body.style
-    document.body.style.overflow = 'hidden'
-    return () => {
-      document.removeEventListener('keydown', onKey)
-      document.body.style.overflow = overflow
-    }
-  }, [lightbox, close])
+  }, [index])
+
+  const current = index === null ? null : galleryPhotos[index]
 
   return (
-    <section id="gallery" className="bg-white py-20 lg:py-28">
-      <div className="max-w-7xl mx-auto px-5 sm:px-6 lg:px-10">
-        <div ref={ref} className="reveal text-center mb-12 lg:mb-14">
-          <p className="text-xs font-medium tracking-widest text-[#3F6C88] uppercase mb-4">
-            Gallery
-          </p>
-          <h2 className="text-[32px] sm:text-[38px] lg:text-[44px] text-[#2F3A40] mb-4 text-balance">
-            Inside My Classroom
-          </h2>
-          <p className="text-[#68767D] max-w-md mx-auto text-base lg:text-lg leading-relaxed">
-            English becomes easier when students are involved, curious and having fun.
-          </p>
-        </div>
+    <Section id="gallery" labelledBy="gallery-title" tone="surface">
+      <Container>
+        <SectionHeading
+          id="gallery-title"
+          eyebrow="Gallery"
+          title="Inside my classroom"
+          intro="Photos from my own lessons. This is what learning with me actually looks like."
+        />
 
-        <div className="columns-1 sm:columns-2 lg:columns-3 gap-4 sm:gap-5">
-          {galleryPhotos.map((img) => (
-            <button
-              key={img.src}
-              type="button"
-              onClick={() => setLightbox(img)}
-              className="break-inside-avoid mb-4 sm:mb-5 block w-full text-left group relative rounded-[20px] overflow-hidden"
-              aria-label={`View photo: ${img.caption}`}
-            >
-              <img
-                src={img.src}
-                alt={img.alt}
-                width={img.width}
-                height={img.height}
-                loading="lazy"
-                decoding="async"
-                className={`gallery-img w-full object-cover rounded-[20px] shadow-sm ${img.ratio}`}
-                style={{ objectPosition: img.position }}
-              />
-              <span className="pointer-events-none absolute inset-0 rounded-[20px] bg-[#2F3A40]/0 group-hover:bg-[#2F3A40]/25 group-focus-visible:bg-[#2F3A40]/25 transition-colors duration-300 flex items-end p-3">
-                <span className="text-white text-xs font-medium opacity-0 group-hover:opacity-100 group-focus-visible:opacity-100 transition-opacity duration-300 bg-[#2F3A40]/60 backdrop-blur-sm px-3 py-1.5 rounded-full">
-                  {img.caption}
+        <div
+          ref={gridRef}
+          id="gallery-grid"
+          className="mt-10 grid grid-cols-2 gap-x-3 gap-y-5 [--order-step:70ms] sm:grid-cols-3 sm:gap-x-4 lg:mt-12 lg:grid-cols-4 lg:gap-x-5 lg:gap-y-6"
+        >
+          {galleryPhotos.map((img, i) => (
+            <Reveal as="figure" key={img.src} className={`group ${expanded ? '' : collapsedClass(i)}`}>
+              <button
+                type="button"
+                onClick={() => setIndex(i)}
+                aria-haspopup="dialog"
+                className="block w-full overflow-hidden rounded-card bg-sky"
+              >
+                <span className="reveal-unveil">
+                  <span className="reveal-zoom">
+                    <picture className="contents">
+                      <source
+                        type="image/webp"
+                        srcSet={img.srcSet}
+                        sizes="(min-width: 1024px) 270px, (min-width: 640px) 31vw, 46vw"
+                      />
+                      <img
+                        src={img.src}
+                        alt={img.alt}
+                        width={img.width}
+                        height={img.height}
+                        loading="lazy"
+                        decoding="async"
+                        className="aspect-4/3 w-full object-cover transition-[scale] duration-700 ease-soft group-hover:scale-[1.035]"
+                        style={{ objectPosition: img.position }}
+                      />
+                    </picture>
+                  </span>
                 </span>
-              </span>
-            </button>
+              </button>
+              <figcaption className="reveal mt-2.5 text-[13px] leading-snug text-muted [--delay:350ms] [--distance:6px] sm:text-sm">
+                <span className="transition-colors duration-300 group-hover:text-ink">{img.caption}</span>
+              </figcaption>
+            </Reveal>
           ))}
         </div>
-      </div>
 
-      {lightbox && (
-        <div
-          role="dialog"
-          aria-modal="true"
-          aria-label={lightbox.caption}
-          className="fixed inset-0 z-60 bg-black/85 flex items-center justify-center p-4 sm:p-6 backdrop-blur-sm"
-          onClick={close}
-        >
-          <div className="relative max-w-4xl w-full" onClick={(e) => e.stopPropagation()}>
-            <img
-              src={lightbox.src}
-              alt={lightbox.alt}
-              width={lightbox.width}
-              height={lightbox.height}
-              className="w-full max-h-[80vh] object-contain rounded-2xl"
-            />
-            <p className="text-center text-sm text-white/70 mt-3">{lightbox.caption}</p>
+        {!expanded && (
+          <div className="mt-8 flex justify-center">
+            <Button variant="secondary" size="sm" onClick={expand} aria-controls="gallery-grid">
+              Show all {count} photos
+            </Button>
+          </div>
+        )}
+      </Container>
+
+      <Modal open={current !== null} onClose={close} label="Photo viewer" onKeyDown={onKeyDown}>
+        {current && index !== null && (
+          <div
+            className="flex h-full flex-col items-center justify-center gap-4 p-4 sm:p-8"
+            onClick={(e) => {
+              if (e.target === e.currentTarget) close()
+            }}
+          >
+            {/* Keyed by photo, so each new photo fades in rather than snapping. */}
+            <picture key={current.src} className="contents">
+              <source type="image/webp" srcSet={current.srcSet} sizes={lightboxSizes} />
+              <img
+                src={current.src}
+                alt={current.alt}
+                width={current.width}
+                height={current.height}
+                className="fade-swap max-h-[78dvh] w-auto max-w-full rounded-2xl object-contain"
+              />
+            </picture>
+
+            <div className="flex w-full max-w-4xl items-center justify-between gap-4 text-white">
+              <button type="button" onClick={() => step(-1)} className={lightboxButton} aria-label="Previous photo">
+                <ArrowLeftIcon className="transition-transform duration-200 group-hover:-translate-x-0.5" />
+              </button>
+              <p className="text-center text-sm text-white/80" aria-live="polite">
+                {current.caption}
+                <span className="ml-3 text-white/60">
+                  {index + 1} / {count}
+                </span>
+              </p>
+              <button type="button" onClick={() => step(1)} className={lightboxButton} aria-label="Next photo">
+                <ArrowRightIcon size={18} className="transition-transform duration-200 group-hover:translate-x-0.5" />
+              </button>
+            </div>
+
             <button
               type="button"
-              autoFocus
-              className="absolute top-3 right-3 w-10 h-10 rounded-full bg-white/20 backdrop-blur-sm text-white flex items-center justify-center hover:bg-white/30 transition-colors"
+              data-autofocus
               onClick={close}
-              aria-label="Close photo"
+              className="absolute top-4 right-4 flex h-11 w-11 items-center justify-center rounded-full bg-white/10 text-white transition-colors duration-200 hover:bg-white/20"
+              aria-label="Close photo viewer"
             >
               <CloseIcon />
             </button>
           </div>
-        </div>
-      )}
-    </section>
+        )}
+      </Modal>
+    </Section>
   )
 }

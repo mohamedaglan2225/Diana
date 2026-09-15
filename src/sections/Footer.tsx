@@ -1,31 +1,37 @@
-import { InstagramIcon, WhatsAppIcon } from '@/components/Icons'
-import { siteConfig, whatsappLink } from '@/site.config'
+import { TextLink } from '@/components/Button'
+import { InstagramIcon, MailIcon, WhatsAppIcon } from '@/components/Icons'
+import { Container } from '@/components/layout'
+import { navLinks } from '@/data/navigation'
+import { emailLink, instagramLink, siteConfig, whatsappLink } from '@/site.config'
 
-const links = [
-  { label: 'About', href: '#about' },
-  { label: 'Lessons', href: '#lessons' },
-  { label: 'Experience', href: '#experience' },
-  { label: 'Contact', href: '#contact' },
-]
+/** Only channels that actually exist are shown — no placeholder social icons. */
+const channels = [
+  whatsappLink && { href: whatsappLink, label: 'WhatsApp', Icon: WhatsAppIcon },
+  emailLink && { href: emailLink, label: 'Email', Icon: MailIcon },
+  instagramLink && { href: instagramLink, label: 'Instagram', Icon: InstagramIcon },
+].filter(Boolean) as { href: string; label: string; Icon: typeof MailIcon }[]
 
 export function Footer() {
   return (
-    <footer className="bg-[#2F3A40] text-white">
-      <div className="max-w-7xl mx-auto px-5 sm:px-6 lg:px-10 py-12 lg:py-16">
-        <div className="grid md:grid-cols-3 gap-10 mb-12">
+    <footer className="tone-dark bg-night text-white">
+      <Container className="py-16 lg:py-20">
+        <div className="grid gap-12 md:grid-cols-[1.4fr_1fr_1fr]">
           <div>
-            <p className="font-serif text-xl mb-2">{siteConfig.brandName}</p>
-            <p className="text-white/60 text-sm leading-relaxed">&ldquo;{siteConfig.tagline}&rdquo;</p>
+            <p className="font-serif text-2xl">
+              English <em className="text-brand-soft">with</em> Diana
+            </p>
+            <p className="mt-4 max-w-xs text-[15px] leading-relaxed text-white/70">
+              Online English lessons for kids, teens, adults and professionals.
+            </p>
+            <p className="mt-6 font-serif text-lg text-white/85 italic">&ldquo;{siteConfig.tagline}&rdquo;</p>
           </div>
 
           <nav aria-label="Footer">
-            <p className="text-xs font-medium tracking-widest text-white/50 uppercase mb-4">
-              Navigate
-            </p>
-            <ul className="space-y-2">
-              {links.map((l) => (
-                <li key={l.href}>
-                  <a href={l.href} className="text-sm text-white/70 hover:text-white transition-colors">
+            <p className="text-xs font-semibold tracking-[0.18em] text-white/60 uppercase">Explore</p>
+            <ul className="mt-5 grid grid-cols-2 gap-x-6 gap-y-3 md:grid-cols-1">
+              {navLinks.map((l) => (
+                <li key={l.id}>
+                  <a href={`#${l.id}`} className="text-[15px] text-white/75 transition-colors hover:text-white">
                     {l.label}
                   </a>
                 </li>
@@ -34,42 +40,43 @@ export function Footer() {
           </nav>
 
           <div>
-            <p className="text-xs font-medium tracking-widest text-white/50 uppercase mb-4">
-              Connect
-            </p>
-            <ul className="flex gap-3">
-              <li>
-                <a
-                  href={siteConfig.instagramUrl ?? '#contact'}
-                  {...(siteConfig.instagramUrl
-                    ? { target: '_blank', rel: 'noopener noreferrer' }
-                    : {})}
-                  aria-label="Instagram"
-                  className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center hover:bg-[#4A7C9B] transition-colors"
-                >
-                  <InstagramIcon />
-                </a>
-              </li>
-              <li>
-                <a
-                  href={whatsappLink ?? '#contact'}
-                  {...(whatsappLink ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
-                  aria-label="WhatsApp"
-                  className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center hover:bg-[#4A7C9B] transition-colors"
-                >
-                  <WhatsAppIcon size={16} />
-                </a>
-              </li>
-            </ul>
+            <p className="text-xs font-semibold tracking-[0.18em] text-white/60 uppercase">Get in touch</p>
+            {channels.length > 0 ? (
+              <ul className="mt-5 space-y-3">
+                {channels.map(({ href, label, Icon }) => (
+                  <li key={label}>
+                    <a
+                      href={href}
+                      {...(href.startsWith('http') ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
+                      className="inline-flex items-center gap-3 text-[15px] text-white/75 transition-colors hover:text-white"
+                    >
+                      <Icon size={16} />
+                      {label}
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <p className="mt-5 text-[15px] leading-relaxed text-white/75">
+                Questions about lessons?
+                <br />
+                <TextLink href="#booking-form" tone="dark" className="mt-2">
+                  Send an enquiry
+                </TextLink>
+              </p>
+            )}
           </div>
         </div>
 
-        <div className="border-t border-white/10 pt-6 text-center">
-          <p className="text-xs text-white/45">
-            © {new Date().getFullYear()} {siteConfig.brandName}. All rights reserved.
+        <div className="mt-14 flex flex-col gap-2 border-t border-white/15 pt-6 text-sm text-white/60 sm:flex-row sm:justify-between">
+          <p>
+            © {new Date().getFullYear()} {siteConfig.brandName}
+          </p>
+          <p>
+            {siteConfig.teacherName} · Online English teacher
           </p>
         </div>
-      </div>
+      </Container>
     </footer>
   )
 }

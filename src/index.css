@@ -1,145 +1,514 @@
-@import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Inter:wght@300;400;500;600;700&display=swap');
 @import 'tailwindcss';
 
-/* ─── Brand tokens (from the Figma Make theme) ─────────────────────────── */
-@theme inline {
-  --color-brand-blue: #BFD7EA;
-  --color-deep-blue: #6F9FBD;
-  --color-light-blue: #EFF7FB;
-  --color-off-white: #FAF9F6;
+/*
+ * Design tokens.
+ *
+ * The default Tailwind palette is switched off so every colour on the site
+ * comes from this list — use `bg-brand`, `text-muted`, `border-line`, etc.
+ * rather than arbitrary hex values.
+ *
+ * Contrast notes (WCAG AA, normal text):
+ *   ink    on any light surface  > 10:1
+ *   muted  on canvas/sky/sand/mist ≥ 5.3:1
+ *   subtle on surface (white)     ≈ 4.5:1  — placeholders and small meta only
+ *   white  on brand               ≈ 5.7:1  — body copy on brand needs ≥ 90% white
+ *   brand  on sky-deep            ≈ 4.6:1  — pills and small labels
+ *   brand-accent is decorative only; never use it for text.
+ */
+@theme {
+  --color-*: initial;
+  --color-white: #ffffff;
+  --color-black: #000000;
+
+  /* Surfaces */
+  --color-canvas: #FAF9F6;
+  --color-surface: #FFFFFF;
+  --color-sky: #EEF5F9;
+  --color-sky-deep: #DDEBF4;
+  --color-mist: #F1F4F7;
+  --color-sand: #F4EEE6;
+  --color-night: #1E2F3A;
+
+  /* Text */
+  --color-ink: #2F3A40;
+  --color-muted: #56646C;
+  --color-subtle: #6B7880;
+
+  /* Brand */
+  --color-brand: #3F6C88;
+  --color-brand-dark: #2F566F;
+  --color-brand-accent: #6F9FBD;
+  --color-brand-soft: #BFD7EA;
   --color-lavender: #D7CBE8;
-  --color-charcoal: #2F3A40;
-  --color-muted: #68767D;
-  --color-beige: #F5EFE8;
+  --color-line: #E2E8EC;
 
   --font-serif: 'DM Serif Display', Georgia, 'Times New Roman', serif;
   --font-sans: 'Inter', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
+
+  /* Fluid type scale — comfortable from 320px phones up to wide desktops. */
+  --text-display: clamp(2.375rem, 1.45rem + 3.6vw, 4.25rem);
+  --text-display--line-height: 1.04;
+  --text-display--letter-spacing: -0.02em;
+  --text-h2: clamp(2rem, 1.5rem + 2vw, 3.125rem);
+  --text-h2--line-height: 1.1;
+  --text-h2--letter-spacing: -0.015em;
+  --text-h3: clamp(1.4rem, 1.25rem + 0.6vw, 1.75rem);
+  --text-h3--line-height: 1.2;
+
+  --radius-card: 1.25rem;
+  --radius-media: 1.5rem;
+
+  --shadow-card: 0 1px 2px rgb(30 47 58 / 0.04), 0 12px 32px -18px rgb(30 47 58 / 0.18);
+  --shadow-lift: 0 2px 4px rgb(30 47 58 / 0.05), 0 28px 56px -24px rgb(30 47 58 / 0.28);
+  --shadow-media: 0 40px 80px -40px rgb(30 47 58 / 0.45);
+  --shadow-button: 0 10px 24px -12px rgb(47 86 111 / 0.7);
+  --shadow-button-hover: 0 14px 28px -12px rgb(47 86 111 / 0.75);
+
+  /* Entrances. No bounce, no overshoot. */
+  --ease-soft: cubic-bezier(0.22, 1, 0.36, 1);
+  /* Lines that draw: even pace so the tip keeps up with what it points at. */
+  --ease-draw: cubic-bezier(0.45, 0.05, 0.25, 1);
 }
 
-html {
-  scroll-behavior: smooth;
+/* Base styles live in a layer so Tailwind utilities can always override them. */
+@layer base {
+  html {
+    scroll-behavior: smooth;
+    -webkit-text-size-adjust: 100%;
+  }
+
+  body {
+    background-color: var(--color-canvas);
+    color: var(--color-ink);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    font-family: var(--font-serif);
+    font-weight: 400;
+  }
+
+  /* Anchor targets clear the fixed navbar. */
+  [id] {
+    scroll-margin-top: 5.5rem;
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-brand);
+    outline-offset: 3px;
+    border-radius: 4px;
+  }
+
+  /* Sections with dark backgrounds need a light focus ring. */
+  .tone-dark :focus-visible {
+    outline-color: var(--color-white);
+  }
+
+  ::selection {
+    background-color: var(--color-brand-soft);
+    color: var(--color-ink);
+  }
 }
 
-html,
-body {
-  /* Guarantees no horizontal scrollbar from decorative blurred shapes. */
-  max-width: 100%;
-  overflow-x: hidden;
-}
+@layer components {
+  .skip-link {
+    position: fixed;
+    top: 12px;
+    left: 12px;
+    z-index: 100;
+    transform: translateY(-200%);
+    background: var(--color-ink);
+    color: var(--color-white);
+    padding: 10px 16px;
+    border-radius: 999px;
+    font: 600 14px/1.2 var(--font-sans);
+    text-decoration: none;
+    transition: transform 0.2s ease;
+  }
+  .skip-link:focus {
+    transform: translateY(0);
+  }
 
-body {
-  font-family: var(--font-sans);
-  color: #2F3A40;
-  background-color: #FAF9F6;
-  -webkit-font-smoothing: antialiased;
-}
+  /* A soft baby-blue light in the hero's top corner, so the page doesn't open on flat white. */
+  .hero-wash {
+    background:
+      radial-gradient(52rem 34rem at 92% 6%, var(--color-sky), transparent 70%),
+      radial-gradient(30rem 22rem at 0% 100%, var(--color-sand), transparent 75%),
+      var(--color-canvas);
+  }
 
-h1, h2, h3, h4 {
-  font-family: var(--font-serif);
-  font-weight: 400;
-}
+  /*
+   * Scroll reveal
+   *
+   * `useReveal` adds `.is-visible` to an element the first time it scrolls
+   * into view, then stops watching it. Anything below reacts to that class,
+   * on the element itself or on its descendants.
+   *
+   *   .reveal          fade up (the default)
+   *   .reveal-left     slide in from the left, from 640px up (fades up below)
+   *   .reveal-right    slide in from the right, from 640px up
+   *   .reveal-scale    fade in from --scale (default 0.97)
+   *   .reveal-fade     opacity only
+   *   .draw-x/.draw-y  a line that draws itself (left to right / top down)
+   *   .reveal-unveil   a photo unveiled from bottom to top
+   *   .reveal-zoom     a photo settling from a slight zoom inside its frame
+   *
+   * Timing, all optional:
+   *   --i         step in a hand-made sequence, multiplied by --stagger
+   *   --delay     fixed extra delay
+   *   --distance  how far .reveal travels
+   *   --order     written by useReveal: siblings that enter together are
+   *               numbered in reading order, multiplied by --order-step
+   */
+  .reveal,
+  .draw-x,
+  .draw-y,
+  .reveal-unveil,
+  .reveal-zoom {
+    --i: 0;
+    --delay: 0ms;
+    transition-delay: calc(
+      var(--order, 0) * var(--order-step, 110ms) + var(--i) * var(--stagger, 80ms) + var(--delay)
+    );
+  }
 
-/* Anchor targets clear the fixed 64px navbar. */
-[id] {
-  scroll-margin-top: 5rem;
-}
-
-/* ─── Focus states ─────────────────────────────────────────────────────── */
-:focus-visible {
-  outline: 2px solid #6F9FBD;
-  outline-offset: 3px;
-  border-radius: 4px;
-}
-
-.skip-link {
-  position: fixed;
-  top: 12px;
-  left: 12px;
-  z-index: 100;
-  transform: translateY(-200%);
-  background: #2F3A40;
-  color: #fff;
-  padding: 10px 16px;
-  border-radius: 999px;
-  font: 600 14px/1.2 'Inter', sans-serif;
-  text-decoration: none;
-  transition: transform 0.2s ease;
-}
-.skip-link:focus {
-  transform: translateY(0);
-}
-
-/* ─── Scrollbar ────────────────────────────────────────────────────────── */
-::-webkit-scrollbar { width: 6px; }
-::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb { background: #BFD7EA; border-radius: 3px; }
-
-/* ─── Animations ───────────────────────────────────────────────────────── */
-@keyframes fadeUp {
-  from { opacity: 0; transform: translateY(32px); }
-  to   { opacity: 1; transform: translateY(0); }
-}
-
-@keyframes float {
-  0%, 100% { transform: translateY(0); }
-  50%      { transform: translateY(-8px); }
-}
-
-.animate-fade-up {
-  opacity: 0;
-  animation: fadeUp 0.7s ease forwards;
-}
-
-.animate-float {
-  animation: float 4s ease-in-out infinite;
-}
-
-/* Section reveal — the IntersectionObserver hook adds .visible */
-.reveal {
-  opacity: 0;
-  transform: translateY(28px);
-  transition: opacity 0.65s ease, transform 0.65s ease;
-}
-.reveal.visible {
-  opacity: 1;
-  transform: translateY(0);
-}
-
-/* Gallery hover */
-.gallery-img {
-  transition: transform 0.35s ease, box-shadow 0.35s ease;
-}
-.group:hover .gallery-img {
-  transform: scale(1.03);
-  box-shadow: 0 16px 40px rgba(111, 159, 189, 0.22);
-}
-
-/* ─── Reduced motion ───────────────────────────────────────────────────── */
-@media (prefers-reduced-motion: reduce) {
-  html { scroll-behavior: auto; }
-
-  .animate-fade-up,
-  .animate-float {
-    animation: none;
+  .reveal {
+    --_x: 0px;
+    --_y: var(--distance, 24px);
+    --_s: 1;
+    opacity: 0;
+    transform: translate3d(var(--_x), var(--_y), 0) scale(var(--_s));
+    transition-property: opacity, transform;
+    transition-duration: 0.8s, 0.9s;
+    transition-timing-function: var(--ease-soft);
+  }
+  .reveal-left {
+    --_x: calc(var(--distance, 16px) * -1);
+    --_y: 0px;
+  }
+  .reveal-right {
+    --_x: var(--distance, 16px);
+    --_y: 0px;
+  }
+  @media (width < 40rem) {
+    /* Stacked on phones: sideways travel would only read as noise. */
+    .reveal-left,
+    .reveal-right {
+      --_x: 0px;
+      --_y: var(--distance, 16px);
+    }
+  }
+  .reveal-scale {
+    --_y: 0px;
+    --_s: var(--scale, 0.97);
+  }
+  .reveal-fade {
+    --_y: 0px;
+  }
+  .reveal.is-visible,
+  .is-visible .reveal {
     opacity: 1;
+    transform: none;
+  }
+
+  .draw-x,
+  .draw-y {
+    transition-property: transform;
+    transition-duration: 1s;
+    transition-timing-function: var(--ease-draw);
+  }
+  .draw-x {
+    transform: scaleX(0);
+    transform-origin: left;
+  }
+  .draw-y {
+    transform: scaleY(0);
+    transform-origin: top;
+  }
+  .draw-x.is-visible,
+  .draw-y.is-visible,
+  .is-visible .draw-x,
+  .is-visible .draw-y {
+    transform: none;
+  }
+
+  /* The frame stays in place; the photo rises into it and settles. */
+  .reveal-unveil {
+    display: block;
+    clip-path: inset(100% 0 0 0);
+    transition-property: clip-path;
+    transition-duration: 1.1s;
+    transition-timing-function: var(--ease-soft);
+  }
+  .reveal-zoom {
+    display: block;
+    transform: scale(1.06);
+    transition-property: transform;
+    transition-duration: 1.4s;
+    transition-timing-function: var(--ease-soft);
+  }
+  .is-visible .reveal-unveil {
+    clip-path: inset(0);
+  }
+  .is-visible .reveal-zoom {
+    transform: none;
+  }
+
+  /*
+   * Hero entrance, played once on first paint: label, heading lines, copy,
+   * actions, formats. The portrait is never hidden (it is the LCP image);
+   * it only settles in scale and position.
+   */
+  .hero-in {
+    animation: hero-in 0.85s var(--ease-soft) both;
+    animation-delay: var(--at, 0ms);
+  }
+
+  /* Each heading line rises out of its own mask. */
+  .hero-title {
+    display: flex;
+    flex-direction: column;
+  }
+  .hero-line {
+    display: block;
+    overflow: hidden;
+    /* Room for ascenders, descenders and the italic overhang. The negative
+       margins cancel it out, so the heading's layout is unchanged. */
+    padding: 0.12em 0.08em 0.2em;
+    margin: -0.12em -0.08em -0.2em;
+  }
+  .hero-line > span {
+    display: block;
+    animation: hero-line 1s var(--ease-soft) both;
+    animation-delay: var(--at, 0ms);
+  }
+
+  .hero-figure {
+    animation: hero-rise 1.6s var(--ease-soft) both;
+  }
+  .hero-portrait {
+    animation: hero-settle 1.8s var(--ease-soft) both;
+  }
+  .hero-frame {
+    animation: hero-frame 1.3s var(--ease-soft) 0.25s both;
+  }
+
+  /*
+   * Navigation: one indicator slides between links as the section changes,
+   * and a hairline at the top of the bar tracks reading progress.
+   */
+  .nav-indicator {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 1px;
+    height: 1px;
+    background: currentColor;
+    transform-origin: 0 0;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+  }
+  .nav-indicator[data-visible] {
+    opacity: 1;
+    transition:
+      opacity 0.3s ease,
+      transform 0.55s var(--ease-soft);
+  }
+
+  .scroll-progress {
+    position: absolute;
+    inset-inline: 0;
+    top: 0;
+    height: 2px;
+    background: var(--color-brand);
+    transform: scaleX(0);
+    transform-origin: left;
+    pointer-events: none;
+  }
+  @supports (animation-timeline: scroll()) {
+    .scroll-progress {
+      animation: scroll-progress linear both;
+      animation-duration: auto;
+      animation-timeline: scroll(root block);
+    }
+  }
+
+  /* Arrow icons nudge forward on hover/focus and settle back when pressed. */
+  .link-arrow {
+    transition: translate 0.25s ease-out;
+  }
+  @media (hover: hover) {
+    .group:hover .link-arrow,
+    .hover-card:hover .link-arrow {
+      translate: 3px 0;
+    }
+  }
+  .group:focus-visible .link-arrow {
+    translate: 3px 0;
+  }
+  .group:active .link-arrow {
+    translate: 1px 0;
+  }
+
+  /*
+   * Dialogs: the backdrop dims the page first, then the content fades and
+   * scales up from 97%, so the two never double-expose. Short fade on close.
+   */
+  .modal[open] {
+    animation: modal-in 0.32s var(--ease-soft) 40ms both;
+  }
+  .modal[open]::backdrop {
+    animation: fade-in 0.22s ease-out;
+  }
+  .modal[data-closing] {
+    pointer-events: none;
+    animation: modal-out 0.18s ease-in forwards;
+  }
+  .modal[data-closing]::backdrop {
+    animation: fade-out 0.18s ease-in forwards;
+  }
+
+  /* Swapping photos in the lightbox, and status messages appearing. */
+  .fade-swap {
+    animation: fade-in 0.35s ease-out;
+  }
+  .status-in {
+    animation: status-in 0.3s var(--ease-soft);
+  }
+}
+
+@keyframes hero-in {
+  from {
+    opacity: 0;
+    transform: translateY(var(--from, 14px));
+  }
+}
+
+@keyframes hero-line {
+  from {
+    transform: translateY(110%);
+  }
+}
+
+@keyframes hero-rise {
+  from {
+    transform: translateY(10px);
+  }
+}
+
+@keyframes hero-settle {
+  from {
+    transform: scale(1.025);
+  }
+}
+
+@keyframes hero-frame {
+  from {
+    opacity: 0;
+    transform: translate(-10px, -10px);
+  }
+}
+
+@keyframes scroll-progress {
+  to {
+    transform: scaleX(1);
+  }
+}
+
+@keyframes modal-in {
+  from {
+    opacity: 0;
+    transform: scale(0.97);
+  }
+}
+
+@keyframes modal-out {
+  to {
+    opacity: 0;
+    transform: scale(0.985);
+  }
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+}
+
+@keyframes fade-out {
+  to {
+    opacity: 0;
+  }
+}
+
+@keyframes status-in {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+}
+
+/* Reduced motion: everything is simply there. No travel, no drawing, no parallax. */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
   }
 
   .reveal,
-  .reveal.visible {
+  .draw-x,
+  .draw-y,
+  .reveal-unveil,
+  .reveal-zoom {
     opacity: 1;
     transform: none;
+    clip-path: none;
     transition: none;
   }
 
-  .gallery-img,
-  .group:hover .gallery-img {
-    transform: none;
+  .hero-in,
+  .hero-line > span,
+  .hero-figure,
+  .hero-portrait,
+  .hero-frame,
+  .modal[open],
+  .modal[open]::backdrop,
+  .modal[data-closing],
+  .modal[data-closing]::backdrop,
+  .fade-swap,
+  .status-in {
+    animation: none;
+  }
+
+  .nav-indicator[data-visible] {
     transition: none;
   }
 
-  *, *::before, *::after {
+  *,
+  *::before,
+  *::after {
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* Never print a half-revealed page. */
+@media print {
+  .reveal,
+  .draw-x,
+  .draw-y,
+  .reveal-unveil,
+  .reveal-zoom {
+    opacity: 1;
+    transform: none;
+    clip-path: none;
   }
 }

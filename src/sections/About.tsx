@@ -1,71 +1,101 @@
-import { Photo } from '@/components/Photo'
+import type { CSSProperties } from 'react'
+import { TextLink } from '@/components/Button'
+import { Container, Section } from '@/components/layout'
+import { Reveal } from '@/components/Reveal'
+import { SectionHeading } from '@/components/SectionHeading'
+import { VideoIntro } from '@/components/VideoIntro'
 import { useReveal } from '@/hooks/useReveal'
-import { aboutPhoto } from '@/lib/images'
 
-const stats = [
-  { value: '7+', label: 'Years Teaching Experience' },
-  { value: '120h', label: 'TESOL / TEFL Training' },
-  { value: 'All', label: 'Levels Beginner–Advanced' },
+const delay = (ms: number) => ({ '--delay': `${ms}ms` }) as CSSProperties
+
+/* Formerly its own "My approach" section. The one place the page talks about personalised teaching. */
+const principles = [
+  {
+    title: 'Speak from day one',
+    desc: 'Speaking isn’t saved for later. It’s part of every lesson, at every level.',
+  },
+  {
+    title: 'Learn by doing',
+    desc: 'Games, role-plays and hands-on tasks: students match, move, solve and create.',
+  },
+  {
+    title: 'Personalised',
+    desc: 'The plan follows the learner, not a fixed textbook, and changes as they grow.',
+  },
+  {
+    title: 'Confidence first',
+    desc: 'Feeling safe to speak comes before perfect accuracy. The accuracy follows.',
+  },
 ]
 
+/*
+ * Who Diana is: video (or photo) introduction beside a short bio and one
+ * credibility statement, then her approach as a row of four principles
+ * across the full width. Headline credentials stay in the trust bar; the
+ * work history and the certificate stay in Experience, one link away.
+ *
+ * Motion, kept calm: the media arrives first, then the quote (its rule
+ * drawing downward), then the biography and the principles.
+ */
 export function About() {
-  const ref = useReveal()
+  const mediaRef = useReveal()
+  const textRef = useReveal()
 
   return (
-    <section id="about" className="bg-[#FAF9F6] py-20 lg:py-28">
-      <div className="max-w-7xl mx-auto px-5 sm:px-6 lg:px-10">
-        <div ref={ref} className="reveal grid lg:grid-cols-2 gap-12 lg:gap-20 items-center">
-          <div className="lg:max-w-[480px]">
-            <Photo
-              photo={aboutPhoto}
-              className="w-full aspect-4/5 rounded-[22px] shadow-xl"
-            />
-
-            <dl className="grid grid-cols-3 gap-3 mt-4">
-              {stats.map((s) => (
-                <div
-                  key={s.label}
-                  className="bg-white rounded-2xl p-4 text-center border border-[#EFF7FB] shadow-sm"
-                >
-                  <dt className="sr-only">{s.label}</dt>
-                  <dd>
-                    <span className="block font-serif text-2xl text-[#4A7C9B] mb-1">{s.value}</span>
-                    <span className="block text-xs text-[#68767D] leading-tight">{s.label}</span>
-                  </dd>
-                </div>
-              ))}
-            </dl>
+    <Section id="about" labelledBy="about-title" tone="sand">
+      <Container>
+        <div className="grid items-center gap-12 lg:grid-cols-[0.8fr_1.2fr] lg:gap-16 xl:gap-20">
+          <div ref={mediaRef} className="reveal mx-auto w-full max-w-md lg:max-w-none">
+            <VideoIntro />
           </div>
 
           <div>
-            <p className="text-xs font-medium tracking-widest text-[#3F6C88] uppercase mb-4">
-              About Diana
-            </p>
-            <h2 className="text-[32px] sm:text-[38px] lg:text-[44px] leading-tight text-[#2F3A40] mb-6">
-              Meet Diana
-            </h2>
-            <blockquote className="text-[#2F3A40] text-lg lg:text-xl leading-relaxed italic mb-8 border-l-4 border-[#BFD7EA] pl-5">
-              &ldquo;I believe students learn best when they feel comfortable enough to speak, make
-              mistakes, laugh and try again.&rdquo;
-            </blockquote>
-            <div className="space-y-4 text-[#68767D] text-base leading-relaxed">
-              <p>
-                Hi, I&rsquo;m Diana Rasok. I&rsquo;m an English teacher and ESL educator passionate
-                about making English practical, engaging and enjoyable.
-              </p>
-              <p>
-                Over the years, I have worked with learners of different ages and levels, from young
-                children discovering their first English words to adults developing stronger
-                communication skills.
-              </p>
-              <p>
-                My lessons focus on speaking, confidence, interaction and creating a positive
-                environment where every student feels involved.
-              </p>
+            <SectionHeading id="about-title" eyebrow="About me" title="Meet Diana" />
+
+            <div ref={textRef} className="mt-7 max-w-2xl">
+              <blockquote
+                className="reveal relative pl-6 font-serif text-2xl leading-snug text-ink italic sm:text-[1.625rem]"
+                style={delay(100)}
+              >
+                <span className="draw-y absolute inset-y-0 left-0 w-0.5 bg-brand-accent" aria-hidden="true" />
+                &ldquo;I believe students learn best when they feel comfortable enough to speak, make
+                mistakes, laugh and try again.&rdquo;
+              </blockquote>
+
+              <div className="reveal mt-7 space-y-4 text-base leading-relaxed text-muted sm:text-lg" style={delay(240)}>
+                <p>
+                  I&rsquo;ve taught private students, language-school classes, speaking clubs and summer
+                  programmes, from young children learning their first words to adults who need English
+                  for work.
+                </p>
+                <p>
+                  Studying in different countries showed me how differently people learn and communicate,
+                  and that listening comes before teaching.
+                </p>
+              </div>
+
+              <div className="reveal mt-6" style={delay(320)}>
+                <TextLink href="#experience">See my experience and certificate</TextLink>
+              </div>
             </div>
           </div>
         </div>
-      </div>
-    </section>
+
+        <div className="mt-12 border-t border-ink/10 pt-8 lg:mt-14">
+          <h3 className="text-h3 text-ink">My approach</h3>
+          <ul className="mt-5 grid gap-x-8 gap-y-5 [--distance:12px] [--order-step:80ms] sm:grid-cols-2 lg:grid-cols-4">
+            {principles.map((p) => (
+              <Reveal as="li" key={p.title} className="reveal">
+                <h4 className="flex items-center gap-3 text-lg text-ink">
+                  <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-brand-accent" aria-hidden="true" />
+                  {p.title}
+                </h4>
+                <p className="mt-1.5 text-[15px] leading-relaxed text-muted">{p.desc}</p>
+              </Reveal>
+            ))}
+          </ul>
+        </div>
+      </Container>
+    </Section>
   )
 }

@@ -1,86 +1,162 @@
+import { useState } from 'react'
+import { Button } from '@/components/Button'
+import { AwardIcon, CloseIcon } from '@/components/Icons'
+import { Container, Section } from '@/components/layout'
+import { Modal } from '@/components/Modal'
+import { Reveal } from '@/components/Reveal'
+import { SectionHeading } from '@/components/SectionHeading'
+import { roles } from '@/data/experience'
 import { useReveal } from '@/hooks/useReveal'
+import { asset } from '@/lib/assets'
+import { certificateImage } from '@/lib/images'
+import { siteConfig } from '@/site.config'
 
-const timelineItems = [
-  {
-    period: '2017 — Present',
-    role: 'Private English Teacher',
-    org: null,
-    desc: 'Personalized English lessons focused on communication, speaking and individual learning goals.',
-  },
-  {
-    period: '2019 — 2023',
-    role: 'ESL Teacher & Methodologist',
-    org: 'Green Card Language Institute',
-    desc: 'Teaching, lesson planning, student assessment and support for teaching programs.',
-  },
-  {
-    period: '2023 — 2024',
-    role: 'English Teacher',
-    org: 'Polyglot Language School',
-    desc: 'English lessons for young and adult learners, speaking clubs and school activities.',
-  },
-  {
-    period: '2024',
-    role: 'English Teacher',
-    org: 'International House Voronezh — Linguist School',
-    desc: 'English-language activities and immersive summer learning experiences.',
-  },
-  {
-    period: '2025 — 2026',
-    role: 'English Teaching Experience in Vietnam',
-    org: null,
-    desc: 'ESL classes for different age groups, school programs and Business English for adults.',
-  },
-]
+const { certificate } = siteConfig
+const certificateSrc = certificate.asset ? asset(certificate.asset) : null
+const certificatePdf = certificate.pdf ? asset(certificate.pdf) : null
+const certificateAlt = `${certificate.name} from ${certificate.issuer}, awarded to ${siteConfig.teacherName} as an accredited course graduate`
 
+/** The full certificate, never cropped: `object-contain` at its native ratio. */
+function CertificatePicture({ sizes, className }: { sizes: string; className: string }) {
+  if (!certificateSrc) return null
+  return (
+    <picture className="contents">
+      <source type="image/webp" srcSet={certificateImage.srcSet} sizes={sizes} />
+      <img
+        src={certificateSrc}
+        alt={certificateAlt}
+        width={certificateImage.width}
+        height={certificateImage.height}
+        loading="lazy"
+        decoding="async"
+        className={`object-contain ${className}`}
+      />
+    </picture>
+  )
+}
+
+/*
+ * Compact on purpose: the heading and the certificate share one row, and the
+ * work history runs as a horizontal timeline on desktop instead of a long CV
+ * column. Motion: the certificate card rises in; hovering it (mouse only)
+ * zooms the thumbnail very slightly and nudges the button's arrow. The viewer
+ * opens with the shared dialog motion. Timeline entries reveal as reached.
+ */
 export function Experience() {
-  const ref = useReveal()
+  const cardRef = useReveal()
+  const [viewing, setViewing] = useState(false)
 
   return (
-    <section id="experience" className="bg-[#EFF7FB] py-20 lg:py-28">
-      <div className="max-w-5xl mx-auto px-5 sm:px-6 lg:px-10">
-        <div ref={ref} className="reveal text-center mb-12 lg:mb-14">
-          <p className="text-xs font-medium tracking-widest text-[#3F6C88] uppercase mb-4">
-            My Journey
-          </p>
-          <h2 className="text-[32px] sm:text-[38px] lg:text-[44px] text-[#2F3A40] mb-4">
-            Teaching Experience
-          </h2>
-          <p className="text-[#68767D] max-w-xl mx-auto text-base lg:text-lg leading-relaxed">
-            Years of teaching in different classrooms have helped me understand that every learner
-            needs a different path to confidence.
-          </p>
-        </div>
-
-        <div className="relative">
-          <div
-            className="hidden sm:block absolute left-5 top-8 bottom-0 w-0.5 bg-linear-to-b from-[#BFD7EA] to-transparent"
-            aria-hidden="true"
+    <Section id="experience" labelledBy="experience-title" tone="mist">
+      <Container>
+        <div className="grid gap-10 lg:grid-cols-[0.9fr_1.1fr] lg:items-center lg:gap-16">
+          <SectionHeading
+            id="experience-title"
+            eyebrow="Experience & qualifications"
+            title="Experience that supports your progress"
+            intro="Where I’ve taught, and the qualification behind my lessons."
           />
 
-          <ol className="space-y-8">
-            {timelineItems.map((item) => (
-              <li key={item.period + item.role} className="relative sm:pl-16">
-                <span
-                  className="hidden sm:flex absolute left-0 top-1 w-10 h-10 rounded-full bg-white border-2 border-[#BFD7EA] items-center justify-center shadow-sm"
-                  aria-hidden="true"
-                >
-                  <span className="w-2.5 h-2.5 rounded-full bg-[#6F9FBD]" />
-                </span>
+          {/* Qualification */}
+          <div
+            ref={cardRef}
+            id="certification"
+            className="hover-card group/cert reveal grid gap-6 rounded-card bg-surface p-5 shadow-card ring-1 ring-line sm:grid-cols-[minmax(0,15rem)_1fr] sm:items-center sm:p-6"
+          >
+            {certificateSrc ? (
+              // Mouse shortcut to the viewer; keyboard and screen-reader users get the button beside it.
+              <button
+                type="button"
+                tabIndex={-1}
+                aria-hidden="true"
+                onClick={() => setViewing(true)}
+                className="block w-full overflow-hidden rounded-xl ring-1 ring-line transition-shadow duration-500 ease-soft group-hover/cert:ring-brand-soft"
+              >
+                <CertificatePicture
+                  sizes="(min-width: 640px) 240px, 85vw"
+                  className="aspect-[2400/1696] w-full bg-surface transition-[scale] duration-700 ease-soft group-hover/cert:scale-[1.02]"
+                />
+              </button>
+            ) : (
+              <span className="flex h-14 w-14 items-center justify-center rounded-full bg-sky text-brand" aria-hidden="true">
+                <AwardIcon />
+              </span>
+            )}
 
-                <div className="bg-white rounded-2xl p-6 border border-[#EFF7FB] shadow-sm hover:shadow-md transition-shadow">
-                  <p className="inline-block text-xs font-medium text-[#3F6C88] bg-[#EFF7FB] px-3 py-1 rounded-full mb-3">
-                    {item.period}
-                  </p>
-                  <h3 className="text-lg text-[#2F3A40] mb-0.5">{item.role}</h3>
-                  {item.org && <p className="text-sm font-medium text-[#3F6C88] mb-2">{item.org}</p>}
-                  <p className="text-sm text-[#68767D] leading-relaxed">{item.desc}</p>
-                </div>
-              </li>
-            ))}
-          </ol>
+            <div>
+              <p className="text-xs font-semibold tracking-[0.18em] text-brand uppercase">Qualification</p>
+              <h3 className="mt-2 text-xl leading-snug text-ink sm:text-2xl">{certificate.name}</h3>
+              <p className="mt-1 text-[15px] font-medium text-ink">{certificate.issuer}</p>
+              <p className="mt-3 text-sm leading-relaxed text-muted">
+                Accredited by ACCREDITAT and The CPD Certification Service.
+              </p>
+              {certificateSrc && (
+                <Button variant="secondary" size="sm" arrow className="mt-5" onClick={() => setViewing(true)}>
+                  View certificate
+                </Button>
+              )}
+            </div>
+          </div>
         </div>
-      </div>
-    </section>
+
+        {/* Experience timeline: a row on desktop, a list on phones. */}
+        <ol className="mt-12 grid gap-x-8 [--order-step:110ms] sm:grid-cols-2 lg:mt-14 lg:grid-cols-5 lg:gap-x-6">
+          {roles.map((r, i) => (
+            <Reveal
+              as="li"
+              key={r.period + r.role}
+              className="reveal relative border-t border-brand-soft pt-6 pb-8 [--distance:14px] before:absolute before:-top-[5px] before:left-0 before:h-2.5 before:w-2.5 before:rounded-full before:bg-brand-accent lg:pb-0"
+            >
+              <p className={`text-sm font-medium tabular-nums ${i === 0 ? 'text-brand' : 'text-muted'}`}>{r.period}</p>
+              <h3 className="mt-2 text-lg leading-snug text-ink">{r.role}</h3>
+              {r.org && <p className="mt-1 text-sm font-medium text-ink/80">{r.org}</p>}
+              <p className="mt-2 text-sm leading-relaxed text-muted">{r.desc}</p>
+            </Reveal>
+          ))}
+        </ol>
+      </Container>
+
+      {certificateSrc && (
+        <Modal open={viewing} onClose={() => setViewing(false)} label={certificate.name}>
+          <div
+            className="flex h-full items-center justify-center p-3 sm:p-8"
+            onClick={(e) => {
+              if (e.target === e.currentTarget) setViewing(false)
+            }}
+          >
+            <div className="relative flex max-h-full w-full max-w-5xl flex-col rounded-3xl bg-surface p-3 pt-14 shadow-lift sm:p-6 sm:pt-16">
+              <CertificatePicture
+                sizes="(min-width: 1100px) 1000px, 96vw"
+                className="mx-auto h-auto max-h-[72dvh] w-auto max-w-full rounded-lg"
+              />
+              <div className="mt-4 flex flex-col items-center gap-2 px-2 pb-1 text-center sm:flex-row sm:justify-between sm:text-left">
+                <p className="text-sm text-muted">
+                  {certificate.name}, {certificate.issuer}
+                </p>
+                {certificatePdf && (
+                  <a
+                    href={certificatePdf}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-sm font-medium text-brand underline decoration-brand/30 underline-offset-4 hover:decoration-brand"
+                  >
+                    Open the original PDF<span className="sr-only"> (opens in a new tab)</span>
+                  </a>
+                )}
+              </div>
+              <button
+                type="button"
+                data-autofocus
+                onClick={() => setViewing(false)}
+                className="absolute top-3 right-3 flex h-10 w-10 items-center justify-center rounded-full bg-sky text-ink transition-colors hover:bg-brand-soft"
+                aria-label="Close certificate"
+              >
+                <CloseIcon />
+              </button>
+            </div>
+          </div>
+        </Modal>
+      )}
+    </Section>
   )
 }
