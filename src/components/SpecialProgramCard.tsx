@@ -20,7 +20,7 @@ export function SpecialProgramCard({ program, onSelect }: Props) {
   return (
     <article
       aria-labelledby={headingId}
-      className="hover-card flex h-full flex-col rounded-card bg-sand p-6 ring-1 ring-ink/5 transition-shadow duration-500 ease-soft hover:shadow-card hover:ring-brand-soft sm:p-8"
+      className="hover-card flex h-full flex-col rounded-card bg-sand p-6 ring-1 ring-ink/5 transition-shadow duration-500 ease-soft hover:shadow-card hover:ring-brand-soft sm:p-7"
     >
       <header className="flex items-center gap-4">
         <span
@@ -39,7 +39,7 @@ export function SpecialProgramCard({ program, onSelect }: Props) {
 
       <p className="mt-4 text-[15px] leading-relaxed text-ink">{program.summary}</p>
 
-      <p id={topicsId} className="mt-5 text-xs font-semibold tracking-[0.14em] text-muted uppercase">
+      <p id={topicsId} className="mt-4 text-xs font-semibold tracking-[0.14em] text-muted uppercase">
         {program.topicsLabel}
       </p>
       <ul aria-labelledby={topicsId} className="mt-3 flex flex-wrap gap-2">
@@ -50,7 +50,7 @@ export function SpecialProgramCard({ program, onSelect }: Props) {
         ))}
       </ul>
 
-      <div className="mt-auto flex flex-col gap-3 pt-6 sm:flex-row sm:items-end sm:justify-between">
+      <div className="mt-auto flex flex-col gap-3 pt-6 xl:flex-row xl:items-end xl:justify-between">
         <p className="text-sm text-muted italic">{program.note}</p>
         <TextLink href="#booking-form" onClick={() => onSelect(program.id)} className="shrink-0">
           Ask about {program.name}

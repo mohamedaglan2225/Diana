@@ -54,7 +54,7 @@ export function Experience() {
             id="experience-title"
             eyebrow="Experience & qualifications"
             title="Experience that supports your progress"
-            intro="Private students, language schools and classrooms in different countries. Each one added something to how I teach."
+            intro="Where I’ve taught, and the qualification behind my lessons."
           />
 
           {/* Qualification */}
@@ -100,7 +100,7 @@ export function Experience() {
         </div>
 
         {/* Experience timeline: a row on desktop, a list on phones. */}
-        <ol className="mt-14 grid gap-x-8 [--order-step:110ms] sm:grid-cols-2 lg:mt-16 lg:grid-cols-5 lg:gap-x-6">
+        <ol className="mt-12 grid gap-x-8 [--order-step:110ms] sm:grid-cols-2 lg:mt-14 lg:grid-cols-5 lg:gap-x-6">
           {roles.map((r, i) => (
             <Reveal
               as="li"

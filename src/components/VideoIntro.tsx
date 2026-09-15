@@ -4,7 +4,7 @@ import { asset } from '@/lib/assets'
 import { aboutPhoto } from '@/lib/images'
 import { siteConfig } from '@/site.config'
 
-const sizes = '(min-width: 1024px) 480px, (min-width: 640px) 448px, 90vw'
+const sizes = '(min-width: 1024px) 440px, (min-width: 640px) 448px, 90vw'
 
 /**
  * Diana's video introduction.

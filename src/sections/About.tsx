@@ -8,7 +8,7 @@ import { useReveal } from '@/hooks/useReveal'
 
 const delay = (ms: number) => ({ '--delay': `${ms}ms` }) as CSSProperties
 
-/* Formerly its own "My approach" section. */
+/* Formerly its own "My approach" section. The one place the page talks about personalised teaching. */
 const principles = [
   {
     title: 'Speak from day one',
@@ -29,10 +29,10 @@ const principles = [
 ]
 
 /*
- * Who Diana is, in one screen: video (or photo) introduction, a short bio
- * that folds in the former "International perspective" section, and her
- * approach as four short principles. The detailed work history and the
- * certificate stay in Experience, one link away.
+ * Who Diana is: video (or photo) introduction beside a short bio and one
+ * credibility statement, then her approach as a row of four principles
+ * across the full width. Headline credentials stay in the trust bar; the
+ * work history and the certificate stay in Experience, one link away.
  *
  * Motion, kept calm: the media arrives first, then the quote (its rule
  * drawing downward), then the biography and the principles.
@@ -43,56 +43,57 @@ export function About() {
 
   return (
     <Section id="about" labelledBy="about-title" tone="sand">
-      <Container className="grid items-start gap-12 lg:grid-cols-[0.9fr_1.1fr] lg:gap-20">
-        <div ref={mediaRef} className="reveal mx-auto w-full max-w-md lg:sticky lg:top-28 lg:max-w-none">
-          <VideoIntro />
+      <Container>
+        <div className="grid items-center gap-12 lg:grid-cols-[0.8fr_1.2fr] lg:gap-16 xl:gap-20">
+          <div ref={mediaRef} className="reveal mx-auto w-full max-w-md lg:max-w-none">
+            <VideoIntro />
+          </div>
+
+          <div>
+            <SectionHeading id="about-title" eyebrow="About me" title="Meet Diana" />
+
+            <div ref={textRef} className="mt-7 max-w-2xl">
+              <blockquote
+                className="reveal relative pl-6 font-serif text-2xl leading-snug text-ink italic sm:text-[1.625rem]"
+                style={delay(100)}
+              >
+                <span className="draw-y absolute inset-y-0 left-0 w-0.5 bg-brand-accent" aria-hidden="true" />
+                &ldquo;I believe students learn best when they feel comfortable enough to speak, make
+                mistakes, laugh and try again.&rdquo;
+              </blockquote>
+
+              <div className="reveal mt-7 space-y-4 text-base leading-relaxed text-muted sm:text-lg" style={delay(240)}>
+                <p>
+                  I&rsquo;ve taught private students, language-school classes, speaking clubs and summer
+                  programmes, from young children learning their first words to adults who need English
+                  for work.
+                </p>
+                <p>
+                  Studying in different countries showed me how differently people learn and communicate,
+                  and that listening comes before teaching.
+                </p>
+              </div>
+
+              <div className="reveal mt-6" style={delay(320)}>
+                <TextLink href="#experience">See my experience and certificate</TextLink>
+              </div>
+            </div>
+          </div>
         </div>
 
-        <div>
-          <SectionHeading id="about-title" eyebrow="About me" title="Meet Diana" />
-
-          <div ref={textRef} className="mt-7 max-w-2xl">
-            <blockquote
-              className="reveal relative pl-6 font-serif text-2xl leading-snug text-ink italic sm:text-[1.625rem]"
-              style={delay(100)}
-            >
-              <span className="draw-y absolute inset-y-0 left-0 w-0.5 bg-brand-accent" aria-hidden="true" />
-              &ldquo;I believe students learn best when they feel comfortable enough to speak, make
-              mistakes, laugh and try again.&rdquo;
-            </blockquote>
-
-            <div className="reveal mt-7 space-y-4 text-base leading-relaxed text-muted sm:text-lg" style={delay(240)}>
-              <p>
-                I&rsquo;ve taught private students, language-school classes, speaking clubs and summer
-                programmes, from young children learning their first words to adults who need English
-                for work.
-              </p>
-              <p>
-                Studying in different countries showed me how differently people learn and
-                communicate. So I don&rsquo;t teach from a script: I listen, adapt, and build each lesson
-                around the person in front of me.
-              </p>
-            </div>
-
-            <div className="reveal mt-6" style={delay(320)}>
-              <TextLink href="#experience">See my experience and certificate</TextLink>
-            </div>
-          </div>
-
-          <div className="mt-10 border-t border-ink/10 pt-8">
-            <h3 className="text-h3 text-ink">My approach</h3>
-            <ul className="mt-5 grid gap-x-8 gap-y-5 [--distance:12px] [--order-step:80ms] sm:grid-cols-2">
-              {principles.map((p) => (
-                <Reveal as="li" key={p.title} className="reveal">
-                  <h4 className="flex items-center gap-3 text-lg text-ink">
-                    <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-brand-accent" aria-hidden="true" />
-                    {p.title}
-                  </h4>
-                  <p className="mt-1.5 text-[15px] leading-relaxed text-muted">{p.desc}</p>
-                </Reveal>
-              ))}
-            </ul>
-          </div>
+        <div className="mt-12 border-t border-ink/10 pt-8 lg:mt-14">
+          <h3 className="text-h3 text-ink">My approach</h3>
+          <ul className="mt-5 grid gap-x-8 gap-y-5 [--distance:12px] [--order-step:80ms] sm:grid-cols-2 lg:grid-cols-4">
+            {principles.map((p) => (
+              <Reveal as="li" key={p.title} className="reveal">
+                <h4 className="flex items-center gap-3 text-lg text-ink">
+                  <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-brand-accent" aria-hidden="true" />
+                  {p.title}
+                </h4>
+                <p className="mt-1.5 text-[15px] leading-relaxed text-muted">{p.desc}</p>
+              </Reveal>
+            ))}
+          </ul>
         </div>
       </Container>
     </Section>

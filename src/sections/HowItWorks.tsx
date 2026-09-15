@@ -4,22 +4,24 @@ import { SectionHeading } from '@/components/SectionHeading'
 
 /*
  * Replaces the former "Learning journey" and "How lessons work" sections:
- * the learner's path in four steps, and the two lesson formats.
+ * the learner's path in four steps, and the two lesson formats. This is the
+ * overview; the placement test's own details (estimated level, teacher
+ * review) live in the Placement Test section right below, not here.
  * Confirmed by the owner: lessons are online, as private 1-to-1 or group
  * lessons. No group sizes, schedules or durations are stated.
  */
 const steps = [
   {
     title: 'Placement test',
-    desc: 'A short test gives an estimated level, so nobody starts in the wrong place.',
+    desc: 'Every new student starts here, so nobody begins in the wrong place.',
   },
   {
     title: 'Level recommendation',
-    desc: 'I review the result with you and recommend a program and lesson format.',
+    desc: 'You get a suggested level, program and lesson format.',
   },
   {
     title: 'Start classes',
-    desc: 'Lessons begin at your recommended level, in the format that suits you.',
+    desc: 'Online lessons begin at your recommended level.',
   },
   {
     title: 'Track improvement',
@@ -50,20 +52,20 @@ const formats = [
  */
 export function HowItWorks() {
   return (
-    <Section id="how-it-works" labelledBy="how-title" tone="surface">
+    <Section id="how-it-works" labelledBy="how-title" tone="canvas">
       <Container>
         <div className="grid gap-10 lg:grid-cols-[0.9fr_1.1fr] lg:items-end lg:gap-16">
           <SectionHeading
             id="how-title"
             eyebrow="How it works"
             title="From your first test to real progress"
-            intro="There’s no fixed textbook route. You start at the right level and move at your own pace, in online lessons you can join from anywhere."
+            intro="Start at the right level, then move at your own pace in online lessons you can join from anywhere."
           />
 
           <ul className="grid gap-4 [--distance:18px] sm:grid-cols-2" aria-label="Lesson formats">
             {formats.map((f, i) => (
               <Reveal as="li" key={f.title} className={`reveal flex ${i === 0 ? 'reveal-left' : 'reveal-right'}`}>
-                <div className="flex w-full flex-col rounded-card bg-mist p-6 ring-1 ring-line transition-shadow duration-500 ease-soft hover:shadow-card hover:ring-brand-soft">
+                <div className="flex w-full flex-col rounded-card bg-surface p-6 ring-1 ring-line transition-shadow duration-500 ease-soft hover:shadow-card hover:ring-brand-soft">
                   <p className="text-xs font-semibold tracking-[0.18em] text-brand uppercase">{f.label}</p>
                   <h3 className="mt-2 text-h3 text-ink">{f.title}</h3>
                   <p className="mt-2 mb-5 text-[15px] leading-relaxed text-muted">{f.desc}</p>
@@ -74,7 +76,7 @@ export function HowItWorks() {
           </ul>
         </div>
 
-        <div className="relative mt-14 lg:mt-16">
+        <div className="relative mt-12 lg:mt-14">
           {/* The path across all four steps (desktop). */}
           <Reveal
             className="draw-x absolute top-[1.375rem] right-0 left-0 hidden h-px bg-linear-to-r from-brand-soft via-brand-soft/60 to-transparent lg:block"

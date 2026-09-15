@@ -22,9 +22,8 @@ export type Program = {
   name: string
   /** Short audience label shown above the name. */
   audience: string
-  /** One-line positioning statement (also the program's goal). */
+  /** One-line positioning statement: who it's for and what it's for. */
   tagline: string
-  forWhom: string
   /** Practical, outcome-phrased focus areas. */
   workOn: string[]
   icon: Icon
@@ -34,15 +33,15 @@ export type Program = {
 
 /*
  * Content rule: describe realistic focus and outcomes only — no durations,
- * prices, formats or guaranteed results.
+ * prices, formats or guaranteed results. One tagline per program: a separate
+ * "for whom" line only restated it.
  */
 export const programs: Program[] = [
   {
     id: 'kids',
     name: 'Kids English',
     audience: 'Children',
-    tagline: 'Playful lessons that get children talking.',
-    forWhom: 'Children who learn best through play, pictures, movement and hands-on activities.',
+    tagline: 'Playful, hands-on lessons that get children talking.',
     workOn: [
       'Everyday words through games, pictures and stories',
       'Saying words and short phrases out loud from the first lessons',
@@ -56,9 +55,7 @@ export const programs: Program[] = [
     id: 'teens',
     name: 'English for Teens',
     audience: 'Teenagers',
-    tagline: 'Clear support for school, and more confidence speaking.',
-    forWhom:
-      'Teenagers who want to understand school English better and feel more comfortable speaking it.',
+    tagline: 'Clearer school English, and more confidence speaking it.',
     workOn: [
       'Grammar explained clearly, then practised until it makes sense',
       'Vocabulary for school topics and everyday conversation',
@@ -72,9 +69,7 @@ export const programs: Program[] = [
     id: 'adults',
     name: 'Adult English',
     audience: 'Adults',
-    tagline: 'Practical English for everyday life.',
-    forWhom:
-      'Adults who want to communicate more comfortably in everyday English, for travel, social life or personal growth.',
+    tagline: 'Practical English for everyday and social life.',
     workOn: [
       'Responding more naturally in everyday conversations',
       'Pronunciation that is clear and easy to understand',
@@ -88,8 +83,7 @@ export const programs: Program[] = [
     id: 'business',
     name: 'Business English',
     audience: 'Professionals',
-    tagline: 'Clear, confident English for work.',
-    forWhom: 'Adults who use English at work and want to communicate more clearly and confidently.',
+    tagline: 'Clear, confident English for people who use it at work.',
     workOn: [
       'Taking part in meetings and discussions',
       'Explaining ideas and opinions clearly',

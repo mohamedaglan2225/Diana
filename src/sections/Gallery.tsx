@@ -1,4 +1,5 @@
-import { useEffect, useState, type KeyboardEvent } from 'react'
+import { useEffect, useRef, useState, type KeyboardEvent } from 'react'
+import { Button } from '@/components/Button'
 import { ArrowLeftIcon, ArrowRightIcon, CloseIcon } from '@/components/Icons'
 import { Container, Section } from '@/components/layout'
 import { Modal } from '@/components/Modal'
@@ -9,12 +10,20 @@ import { galleryPhotos } from '@/lib/images'
 const count = galleryPhotos.length
 const lightboxSizes = '(min-width: 1024px) 1024px, 100vw'
 
+/*
+ * Until "Show all" is pressed the grid keeps to its first rows: 6 photos in
+ * 2 or 3 columns, 8 in 4 columns. Hidden photos are `display: none`, so they
+ * are out of the tab order; the lightbox still steps through all of them.
+ */
+const collapsedClass = (i: number) => (i < 6 ? '' : i < 8 ? 'hidden lg:block' : 'hidden')
+
 const lightboxButton =
   'group flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-white/10 transition-colors duration-200 hover:bg-white/20'
 
 /*
- * Twelve photos in an even grid (2, 3 or 4 columns) at one 4:3 crop, so the
- * gallery takes three rows on desktop instead of a tall masonry column.
+ * Twelve photos in an even grid (2, 3 or 4 columns) at one 4:3 crop. Only
+ * the first rows show at first, so the gallery stays short; "Show all
+ * photos" reveals the rest and moves focus to the first new one.
  *
  * Motion: each frame is already in place (a soft sky tint) and its photo
  * rises into it from the bottom, settling from a slight zoom, then the
@@ -27,6 +36,22 @@ const lightboxButton =
  */
 export function Gallery() {
   const [index, setIndex] = useState<number | null>(null)
+  const [expanded, setExpanded] = useState(false)
+  const gridRef = useRef<HTMLDivElement>(null)
+  // Index of the first photo that was hidden when "Show all" was pressed.
+  const focusFrom = useRef(-1)
+
+  const expand = () => {
+    const buttons = gridRef.current ? [...gridRef.current.querySelectorAll('button')] : []
+    focusFrom.current = buttons.findIndex((b) => b.offsetParent === null)
+    setExpanded(true)
+  }
+
+  useEffect(() => {
+    if (!expanded || focusFrom.current < 0) return
+    gridRef.current?.querySelectorAll('button')[focusFrom.current]?.focus()
+    focusFrom.current = -1
+  }, [expanded])
 
   const close = () => setIndex(null)
   const step = (delta: number) => setIndex((i) => (i === null ? i : (i + delta + count) % count))
@@ -58,9 +83,13 @@ export function Gallery() {
           intro="Photos from my own lessons. This is what learning with me actually looks like."
         />
 
-        <div className="mt-12 grid grid-cols-2 gap-x-3 gap-y-5 [--order-step:70ms] sm:grid-cols-3 sm:gap-x-4 lg:mt-14 lg:grid-cols-4 lg:gap-x-5 lg:gap-y-6">
+        <div
+          ref={gridRef}
+          id="gallery-grid"
+          className="mt-10 grid grid-cols-2 gap-x-3 gap-y-5 [--order-step:70ms] sm:grid-cols-3 sm:gap-x-4 lg:mt-12 lg:grid-cols-4 lg:gap-x-5 lg:gap-y-6"
+        >
           {galleryPhotos.map((img, i) => (
-            <Reveal as="figure" key={img.src} className="group">
+            <Reveal as="figure" key={img.src} className={`group ${expanded ? '' : collapsedClass(i)}`}>
               <button
                 type="button"
                 onClick={() => setIndex(i)}
@@ -95,6 +124,14 @@ export function Gallery() {
             </Reveal>
           ))}
         </div>
+
+        {!expanded && (
+          <div className="mt-8 flex justify-center">
+            <Button variant="secondary" size="sm" onClick={expand} aria-controls="gallery-grid">
+              Show all {count} photos
+            </Button>
+          </div>
+        )}
       </Container>
 
       <Modal open={current !== null} onClose={close} label="Photo viewer" onKeyDown={onKeyDown}>

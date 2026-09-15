@@ -35,7 +35,7 @@ image path — set `PUBLIC_BASE_PATH=/my-sub-path/` before `npm run build`.
 | Placement test (marketing entry point, no test engine) | `sections/PlacementTest.tsx` + `data/levels.ts` | `#placement-test` |
 | About: video intro, short bio, approach | `sections/About.tsx` + `components/VideoIntro.tsx` | `#about` |
 | Experience & qualifications | `sections/Experience.tsx` + `data/experience.ts` | `#experience`, `#certification` |
-| Gallery | `sections/Gallery.tsx` + `lib/images.ts` | `#gallery` |
+| Gallery (first two rows, then "Show all photos") | `sections/Gallery.tsx` + `lib/images.ts` | `#gallery` |
 | Student stories (hidden until real reviews exist) | `sections/StudentStories.tsx` + `data/testimonials.ts` | `#stories` |
 | FAQ | `sections/FAQ.tsx` + `data/faq.ts` | `#faq` |
 | Contact / enquiry form | `sections/Contact.tsx` | `#contact`, `#booking-form` |
@@ -59,8 +59,10 @@ sets it to "Not sure yet".
 
 **Avoiding repetition.** Each message has one home: credentials in the trust
 bar, lesson formats in How it works, Diana's approach in About, the detailed
-history and certificate in Experience. The FAQ only answers what the page
-doesn't already answer in place.
+history and certificate in Experience, the placement test's details (estimated
+level, teacher review) in the Placement test section. Each program has one
+tagline, not a tagline plus a "for whom" line. The FAQ keeps its answers short
+where the page already explains something in full.
 
 ## Design tokens
 
@@ -179,6 +181,9 @@ in `src/index.css`.
   and backdrop click close, page scroll is locked and focus returns to the
   trigger.
 - The collapsed mobile menu and closed FAQ answers are `inert`.
+- Gallery photos beyond the first rows are `display: none` (out of the tab
+  order) until "Show all photos" is pressed; focus then moves to the first
+  newly shown photo. The lightbox always steps through all twelve.
 - All motion respects `prefers-reduced-motion`: content is simply there,
   with no reveals, line drawing, parallax or dialog animation. The portrait
   is never hidden by animation (it is the LCP image), and revealed content

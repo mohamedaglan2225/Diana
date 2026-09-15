@@ -9,9 +9,9 @@ import { programs, specialPrograms, type ProgramChoice } from '@/data/programs'
 type Props = { onSelect: (choice: ProgramChoice) => void }
 
 /*
- * The four core programs as a 2 × 2 grid from tablet up, then the special
- * programs as a pair of warmer, shorter cards. Six programs, three rows on
- * desktop.
+ * The four core programs in one row from 1280px (2 × 2 on tablets), then the
+ * special programs as a pair of warmer cards on a shared band. Six programs,
+ * two rows on desktop.
  */
 export function Programs({ onSelect }: Props) {
   return (
@@ -24,7 +24,7 @@ export function Programs({ onSelect }: Props) {
             id="programs-title"
             eyebrow="Programs"
             title="Who I help, and how"
-            intro="Four core programs for different ages and goals, from a child’s first words to confident English at work."
+            intro="Four core programs by age and goal, plus focused programs for speaking practice and travel."
           />
           <Reveal
             as="p"
@@ -37,7 +37,7 @@ export function Programs({ onSelect }: Props) {
         </div>
 
         {/* Each card reveals as it is reached; cards that arrive together stagger 01, 02… */}
-        <ul className="mt-12 grid gap-5 [--order-step:90ms] md:grid-cols-2 lg:mt-14 lg:gap-6">
+        <ul className="mt-10 grid gap-5 [--order-step:90ms] md:grid-cols-2 lg:mt-12 xl:grid-cols-4">
           {programs.map((p, i) => (
             <Reveal as="li" key={p.id} className="reveal">
               <ProgramCard program={p} index={i} onSelect={onSelect} />
@@ -45,15 +45,15 @@ export function Programs({ onSelect }: Props) {
           ))}
         </ul>
 
-        <div className="mt-14 lg:mt-16">
-          <Reveal className="reveal flex flex-col gap-2 [--distance:12px] sm:flex-row sm:items-baseline sm:justify-between sm:gap-8">
+        <div className="mt-10 rounded-media bg-surface/55 p-4 ring-1 ring-brand-soft/50 sm:p-6 lg:mt-12">
+          <Reveal className="reveal flex flex-col gap-1 px-1 [--distance:12px] sm:flex-row sm:items-baseline sm:justify-between sm:gap-8">
             <h3 className="flex items-center gap-3 text-h3 text-ink">
               <span className="h-2 w-2 rounded-full bg-brand-accent" aria-hidden="true" />
               Special programs
             </h3>
             <p className="text-[15px] text-muted">Focused options for a specific goal.</p>
           </Reveal>
-          <ul className="mt-6 grid gap-5 [--order-step:90ms] lg:grid-cols-2 lg:gap-6">
+          <ul className="mt-5 grid gap-4 [--order-step:90ms] md:grid-cols-2 lg:gap-5">
             {specialPrograms.map((p) => (
               <Reveal as="li" key={p.id} className="reveal">
                 <SpecialProgramCard program={p} onSelect={onSelect} />

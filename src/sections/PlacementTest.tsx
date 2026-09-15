@@ -8,11 +8,12 @@ import { levels } from '@/data/levels'
 import { useReveal } from '@/hooks/useReveal'
 import { siteConfig } from '@/site.config'
 
+/* Short on purpose: why the review matters is said once, under the levels. */
 const flow = [
-  { title: 'Take the test', desc: 'Complete the placement test online.' },
-  { title: 'Get an Estimated English Level', desc: 'A first estimate of where your English is today.' },
-  { title: 'Teacher review', desc: 'I check the result, especially speaking, which a test can’t fully measure.' },
-  { title: 'Recommended program', desc: 'You get a suggested level, program and lesson format.' },
+  { title: 'Take the test', desc: 'Online, before your first lesson.' },
+  { title: 'Estimated English Level', desc: 'Where your English is today.' },
+  { title: 'Teacher review', desc: 'I check the result with you.' },
+  { title: 'Recommended program', desc: 'The right level and format.' },
 ]
 
 type Props = {
@@ -88,27 +89,28 @@ export function PlacementTest({ onEnquire }: Props) {
 
         <Reveal className="reveal rounded-media bg-white/[0.06] p-6 ring-1 ring-white/10 [--delay:150ms] sm:p-8">
           <h3 className="text-xl text-white">How the test works</h3>
-          <ol className="mt-6 space-y-5">
+          {/* Two across wherever the card is wide enough; one column in the narrow 1024–1279px card. */}
+          <ol className="mt-5 grid gap-3 sm:grid-cols-2 lg:grid-cols-1 xl:grid-cols-2">
             {flow.map((step, i) => (
-              <li key={step.title} className="flex gap-4">
+              <li key={step.title} className="flex gap-3.5 rounded-2xl bg-white/[0.05] p-4 ring-1 ring-white/10">
                 <span
-                  className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-brand-soft/40 font-serif text-white"
+                  className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full border border-brand-soft/40 font-serif text-white"
                   aria-hidden="true"
                 >
                   {i + 1}
                 </span>
-                <div className="pt-1">
-                  <p className="font-medium text-white">
+                <div className="pt-0.5">
+                  <p className="font-medium leading-snug text-white">
                     <span className="sr-only">Step {i + 1}: </span>
                     {step.title}
                   </p>
-                  <p className="mt-1 text-[15px] leading-relaxed text-white/70">{step.desc}</p>
+                  <p className="mt-1 text-sm leading-snug text-white/70">{step.desc}</p>
                 </div>
               </li>
             ))}
           </ol>
 
-          <div className="mt-7 border-t border-white/10 pt-6">
+          <div className="mt-6 border-t border-white/10 pt-5">
             <p className="text-xs font-semibold tracking-[0.18em] text-brand-soft uppercase">Levels</p>
             <ol className="mt-3 flex flex-wrap items-center gap-x-1.5 gap-y-2 text-sm text-white/85">
               {levels.map((level, i) => (
@@ -119,8 +121,8 @@ export function PlacementTest({ onEnquire }: Props) {
               ))}
             </ol>
             <p className="mt-4 text-sm leading-relaxed text-white/70">
-              The result is an estimated level. Speaking is best judged in conversation, so your level is
-              confirmed after a teacher review.
+              The result is an Estimated English Level. A test can&rsquo;t fully measure speaking, which is
+              best judged in conversation, so your level is confirmed after a teacher review.
             </p>
           </div>
         </Reveal>
